@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <help_text>// Uncomment the following line to change the fontsize and font:
+fontsize=11
+fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Welcome to UMLet!
+//
+// Double-click on elements to add them to the diagram, or to copy them
+// Edit elements by modifying the text in this panel
+// Hold Ctrl to select multiple elements
+// Use Ctrl+mouse to select via lasso
+//
+// Use +/- or Ctrl+mouse wheel to zoom
+// Drag a whole relation at its central square icon
+//
+// Press Ctrl+C to copy the whole diagram to the system clipboard (then just paste it to, eg, Word)
+// Edit the files in the "palettes" directory to create your own element palettes
+//
+// Select "Custom Elements &gt; New..." to create new element types
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// This text will be stored with each diagram;  use it for notes.</help_text>
+  <zoom_level>11</zoom_level>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>33</x>
+      <y>0</y>
+      <w>1617</w>
+      <h>1034</h>
+    </coordinates>
+    <panel_attributes>AOWashingMachine::Root
+--
+
+
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>572</x>
+      <y>253</y>
+      <w>1012</w>
+      <h>726</h>
+    </coordinates>
+    <panel_attributes>DoorClosed
+--
+entry / m_doorState = CLOSED
+
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>154</x>
+      <y>561</y>
+      <w>286</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>DoorOpen
+--
+entry / m_doorState = OPEN
+START_PAUSE_BUTTON_IND / ErrorBeep()
+CLOSE_DOOR_IND / ^^WASH_CLOSE
+
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>429</x>
+      <y>605</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>264</x>
+      <y>429</y>
+      <w>44</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>type=decision</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>429</x>
+      <y>671</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>440</x>
+      <y>594</y>
+      <w>110</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_CLOSE
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>297</x>
+      <y>440</y>
+      <w>297</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;250.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>396</x>
+      <y>451</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>[closed]
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>275</x>
+      <y>462</y>
+      <w>33</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>198</x>
+      <y>352</y>
+      <w>110</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0;80.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>187</x>
+      <y>352</y>
+      <w>22</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>198</x>
+      <y>341</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>CheckDoorSensor()
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>209</x>
+      <y>495</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>[open]
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>616</x>
+      <y>352</y>
+      <w>924</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>DoorUnlocked
+--
+entry / UnlockDoor()
+OPEN_DOOR_IND / ^^WASH_OPEN
+     
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>737</x>
+      <y>297</y>
+      <w>88</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0;60.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>726</x>
+      <y>297</y>
+      <w>22</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>605</x>
+      <y>462</y>
+      <w>946</w>
+      <h>495</h>
+    </coordinates>
+    <panel_attributes>DoorLocked
+--
+entry / LockDoor()
+CYCLE_SELECTED_IND / ErrorBeep()
+OPEN_DOOR_IND / PrintError("cannot open while door is locked")
+START_PAUSE_BUTTON_IND / ^iWASH_DELAY
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>968</x>
+      <y>539</y>
+      <w>22</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>type=history_deep</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1111</x>
+      <y>693</y>
+      <w>363</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>DrainingWash
+--
+entry / history = &amp;DrainingWash,
+        StartDraining()
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>616</x>
+      <y>594</y>
+      <w>363</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>FillingWash
+--
+entry / history = &amp;FillingWash
+        StartFilling(cycleParameters)
+exit / StopFilling()
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1111</x>
+      <y>594</y>
+      <w>363</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>Washing
+--
+entry / history = &amp;Washing, start timer
+        StartWashing(cycleParameters)
+exit / disarm timer, StopWashing(), StartDraining()    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1111</x>
+      <y>781</y>
+      <w>363</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>DrainingRinse
+--
+entry / history = &amp;DrainingRinse, 
+        StartDraining()
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1111</x>
+      <y>858</y>
+      <w>363</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Spinning
+--
+entry / history = &amp;Spinning, start timer
+        StartSpinning()
+SPIN_TIMEOUT / history = &amp;FillingWash, ^^WASH_DONE
+exit / disarm timer, StopSpinning(), 
+       PlayCompletionSong()
+
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>616</x>
+      <y>693</y>
+      <w>363</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>FillingRinse
+--
+entry / history = &amp;FillingRinse,
+        StartFilling(cycleParameters)  
+exit / StopFilling()
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>616</x>
+      <y>803</y>
+      <w>363</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>Rinsing
+--
+entry / history = &amp;Rinsing, start timer
+        StartRinsing(cycleParameters)
+exit / disarm timer, StopRinsing(), StartDraining()     
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>968</x>
+      <y>627</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>968</x>
+      <y>814</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>968</x>
+      <y>715</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1276</x>
+      <y>649</y>
+      <w>33</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1276</x>
+      <y>825</y>
+      <w>33</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>913</x>
+      <y>539</y>
+      <w>77</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>968</x>
+      <y>396</y>
+      <w>33</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1199</x>
+      <y>396</y>
+      <w>33</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>759</x>
+      <y>396</y>
+      <w>33</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;60.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>770</x>
+      <y>429</y>
+      <w>88</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_DONE
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1210</x>
+      <y>429</y>
+      <w>154</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_DRAINED_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>979</x>
+      <y>616</y>
+      <w>132</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_FILLED_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1298</x>
+      <y>836</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_DRAINED_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>979</x>
+      <y>803</y>
+      <w>132</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>RINSE_TIMEOUT
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>979</x>
+      <y>429</y>
+      <w>198</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>START_PAUSE_BUTTON_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>781</x>
+      <y>748</y>
+      <w>33</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>77</x>
+      <y>198</y>
+      <w>1529</w>
+      <h>814</h>
+    </coordinates>
+    <panel_attributes>Started
+--
+entry / cycleParameters = NormalConfig, history = &amp;FillingWash
+CYCLE_SELECTED_IND(params) / cycleParameters = params, history = &amp;FillingWash, PrintCycleParams()
+
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>836</x>
+      <y>770</y>
+      <w>198</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_FILLED_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>979</x>
+      <y>704</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_DRAINED_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>495</x>
+      <y>55</y>
+      <w>671</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Stopped
+--
+
+WASH_STOP_REQ / WASH_STOP_CFM(OK)
+
+     
+    
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>396</x>
+      <y>88</y>
+      <w>121</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>385</x>
+      <y>88</y>
+      <w>22</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>814</x>
+      <y>132</y>
+      <w>33</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>836</x>
+      <y>154</y>
+      <w>275</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_START_REQ / WASH_START_CFM(OK)
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>451</x>
+      <y>660</y>
+      <w>99</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_OPEN
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1287</x>
+      <y>660</y>
+      <w>143</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>WASH_TIMEOUT
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1111</x>
+      <y>506</y>
+      <w>198</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>Delay
+--
+entry / StartDraining()
+   
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1298</x>
+      <y>528</y>
+      <w>275</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>230.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1386</x>
+      <y>517</y>
+      <w>110</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>iWASH_DELAY
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
