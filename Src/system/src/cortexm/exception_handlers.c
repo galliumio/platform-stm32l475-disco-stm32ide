@@ -22,6 +22,8 @@ _start (void);
 // handler routines in your application code.
 // ----------------------------------------------------------------------------
 
+// Gallium - Disabled (Use the one in Startup/startup_stm32l475vgtx.s)
+#if 0
 #if defined(DEBUG)
 
 // The DEBUG version is not naked, but has a proper stack frame,
@@ -49,6 +51,7 @@ Reset_Handler(void)
   }
 
 #endif
+#endif // Gallium
 
 void __attribute__ ((section(".after_vectors"),weak))
 NMI_Handler (void)
@@ -485,6 +488,8 @@ BusFault_Handler_C (ExceptionStackFrame* frame __attribute__((unused)),
   uint32_t bfar = SCB->BFAR; // Bus Fault Address
   uint32_t cfsr = SCB->CFSR; // Configurable Fault Status Registers
 
+  // Gallium - Added trace_initialize().
+  trace_initialize();
   trace_printf ("[BusFault]\n");
   dumpExceptionStack (frame, cfsr, mmfar, bfar, lr);
 #endif // defined(TRACE)
@@ -539,6 +544,8 @@ UsageFault_Handler_C (ExceptionStackFrame* frame __attribute__((unused)),
 #endif
 
 #if defined(TRACE)
+  // Gallium - Added trace_initialize().
+  trace_initialize();
   trace_printf ("[UsageFault]\n");
   dumpExceptionStack (frame, cfsr, mmfar, bfar, lr);
 #endif // defined(TRACE)
