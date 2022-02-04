@@ -255,10 +255,6 @@ QState SensorAccelGyro::Started(SensorAccelGyro * const me, QEvt const * const e
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
-            ACCELERO_StatusTypeDef status = BSP_ACCELERO_Init();
-            FW_ASSERT(status == ACCELERO_OK);
-            // @todo This seems unnecessary and should be removed. It is sent upon entry to On state.
-            me->Send(new GpioInActiveInd(), me->GetHsmn());
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -266,116 +262,8 @@ QState SensorAccelGyro::Started(SensorAccelGyro * const me, QEvt const * const e
             BSP_ACCELERO_DeInit();
             return Q_HANDLED();
         }
-        case Q_INIT_SIG: {
-            return Q_TRAN(&SensorAccelGyro::Off);
-        }
     }
     return Q_SUPER(&SensorAccelGyro::Root);
-}
-
-QState SensorAccelGyro::Off(SensorAccelGyro * const me, QEvt const * const e) {
-    switch (e->sig) {
-        case Q_ENTRY_SIG: {
-            EVENT(e);
-            return Q_HANDLED();
-        }
-        case Q_EXIT_SIG: {
-            EVENT(e);
-            return Q_HANDLED();
-        }
-        case SENSOR_ACCEL_GYRO_ON_REQ: {
-            SensorAccelGyroOnReq const &req = static_cast<SensorAccelGyroOnReq const &>(*e);
-            bool success = false;
-            Error error = ERROR_HAL;
-            do {
-                me->m_pipe = req.GetPipe();
-                if (!me->m_pipe) {
-                    error = ERROR_PARAM;
-                    break;
-                }
-                // @todo Enable sensor. Currently it is enabled at init.
-                /*
-                DrvStatusTypeDef status = BSP_ACCELERO_Sensor_Enable(me->m_handle);
-                if (status != COMPONENT_OK) {
-                    ERROR("BSP_ACCELERO_Sensor_Enable failed (%d)", status);
-                    break;
-                }
-                */
-                // Enables DRDY Interrupt.
-                uint8_t tmp = SENSOR_IO_Read(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW, LSM6DSL_ACC_GYRO_INT1_CTRL);
-                SENSOR_IO_Write(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW, LSM6DSL_ACC_GYRO_INT1_CTRL, tmp | 0x01);
-                success = true;
-            } while(0);
-            if (success) {
-                me->SendCfm(new SensorAccelGyroOnCfm(ERROR_SUCCESS), req);
-                me->Raise(new Evt(TURNED_ON));
-            } else {
-                me->SendCfm(new SensorAccelGyroOnCfm(error), req);
-            }
-            return Q_HANDLED();
-        }
-        case TURNED_ON: {
-             EVENT(e);
-             return Q_TRAN(&SensorAccelGyro::On);
-         }
-    }
-    return Q_SUPER(&SensorAccelGyro::Started);
-}
-
-QState SensorAccelGyro::On(SensorAccelGyro * const me, QEvt const * const e) {
-    switch (e->sig) {
-        case Q_ENTRY_SIG: {
-            EVENT(e);
-            // The very first GPIO_IN_ACTIVE_IND event may arrive before this hsm enters the "On" state
-            // and is therefore ignored. This could happen if the interrupt pin has been active already
-            // during initialization. To kick start the processing, a GPIO_IN_ACTIVE_IND event is
-            // artifically generated here.
-            me->Send(new GpioInActiveInd(), me->GetHsmn());
-            return Q_HANDLED();
-        }
-        case Q_EXIT_SIG: {
-            EVENT(e);
-            return Q_HANDLED();
-        }
-        case SENSOR_ACCEL_GYRO_OFF_REQ: {
-            SensorAccelGyroOffReq const &req = static_cast<SensorAccelGyroOffReq const &>(*e);
-            me->m_pipe = NULL;
-            // Disables DRDY Interrupt.
-            uint8_t tmp = SENSOR_IO_Read(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW, LSM6DSL_ACC_GYRO_INT1_CTRL);
-            SENSOR_IO_Write(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW, LSM6DSL_ACC_GYRO_INT1_CTRL, tmp & ~0x01);
-            // @todo Disable sensor. Currently it is always enabled after init.
-            /*
-            DrvStatusTypeDef status = BSP_ACCELERO_Sensor_Disable(me->m_handle);
-            FW_ASSERT(status == COMPONENT_OK);
-            */
-            me->SendCfm(new SensorAccelGyroOffCfm(ERROR_SUCCESS), req);
-            me->Raise(new Evt(TURNED_OFF));
-            return Q_HANDLED();
-        }
-        case GPIO_IN_ACTIVE_IND: {
-            //EVENT(e);
-            int16_t data[3];
-            BSP_ACCELERO_AccGetXYZ(data);
-            LOG("Accel data = %d %d %d", data[0], data[1], data[2]);
-            // @TODO - Perform any unit conversion. Currently just return raw values.
-            //         Gyro data are not filled in, left as default 0.
-            AccelGyroReport report(data[0], data[1], data[2]);
-            uint32_t count = me->m_pipe->Write(&report, 1);
-            if (count != 1) {
-                WARNING("Pipe full");
-            }
-            return Q_HANDLED();
-        }
-        case GPIO_IN_INACTIVE_IND: {
-            //EVENT(e);
-            return Q_HANDLED();
-        }
-        case TURNED_OFF: {
-             EVENT(e);
-             return Q_TRAN(&SensorAccelGyro::Off);
-        }
-    }
-    return Q_SUPER(&SensorAccelGyro::Started);
 }
 
 /*

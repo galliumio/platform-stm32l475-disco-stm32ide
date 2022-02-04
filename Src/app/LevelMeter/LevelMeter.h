@@ -86,6 +86,8 @@ protected:
     Timer m_stateTimer;
     Timer m_reportTimer;
 
+    uint32_t m_testCnt;
+
 #define LEVEL_METER_TIMER_EVT \
     ADD_EVT(STATE_TIMER) \
     ADD_EVT(REPORT_TIMER)

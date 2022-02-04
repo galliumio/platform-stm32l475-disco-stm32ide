@@ -60,17 +60,6 @@ protected:
     static QState Root(Traffic * const me, QEvt const * const e);
         static QState Stopped(Traffic * const me, QEvt const * const e);
         static QState Started(Traffic * const me, QEvt const * const e);
-           static QState NSGo(Traffic * const me, QEvt const * const e);
-               static QState NSMinTimeWait(Traffic * const me, QEvt const * const e);
-               static QState NSMinTimeExceeded(Traffic * const me, QEvt const * const e);
-           static QState NSSlow(Traffic * const me, QEvt const * const e);
-           static QState EWGo(Traffic * const me, QEvt const * const e);
-               static QState EWMinTimeWait(Traffic * const me, QEvt const * const e);
-               static QState EWMinTimeExceeded(Traffic * const me, QEvt const * const e);
-           static QState EWSlow(Traffic * const me, QEvt const * const e);
-           static QState StopSign(Traffic * const me, QEvt const * const e);
-               static QState StopSignOn(Traffic * const me, QEvt const * const e);
-               static QState StopSignOff(Traffic * const me, QEvt const * const e);
 
     Lamp m_lampNS;          // Orthogonal region for the NS lamp.
     Lamp m_lampEW;          // Orthogonal region for the EW lamp.
