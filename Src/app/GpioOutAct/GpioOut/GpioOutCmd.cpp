@@ -203,7 +203,7 @@ static CmdStatus On(Console &console, Evt const *e) {
                 //           As a reminder, the set of LED patterns is defined in the structure TEST_LED_PATTERN_SET.
                 // Sample code to show how to use the API to control LED brightness and add delay. Please remove or comment
                 // it when adding your own code.
-                // Being sample code.
+                // Beginning sample code.
                 InitGpio();
                 ConfigPwm(1000);
                 Delay(200);

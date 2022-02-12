@@ -34,7 +34,7 @@ public:
     }
 
     // Returns a reference to the indexed GPIO interval object.
-    // Use FW_ASSERT() to ensure index is in range.
+    // Use GPIO_PATTERN_ASSERT() to ensure index is in range.
     GpioInterval const &GetInterval(uint32_t index) const {
         return ...
     }
@@ -44,10 +44,10 @@ public:
 class GpioPatternSet {
 public:
     enum {
-        COUNT = 4
+        COUNT = 4                   // Maximum number of patterns supported.
     };
     uint32_t m_count;               // Number of patterns in use.
-    GpioPattern m_pattern[COUNT];    // Array of patterns. Used ones start from index 0.
+    GpioPattern m_pattern[COUNT];   // Array of patterns. Used ones start from index 0.
     
     // Assignment 2
     /*
