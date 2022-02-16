@@ -40,10 +40,10 @@ public:
 class GpioPatternSet {
 public:
     enum {
-        COUNT = 4
+        COUNT = 4                   // Maximum number of patterns supported.
     };
     uint32_t m_count;               // Number of patterns in use.
-    GpioPattern m_pattern[COUNT];    // Array of patterns. Used ones start from index 0.
+    GpioPattern m_pattern[COUNT];   // Array of patterns. Used ones start from index 0.
     
     // Must perform range check. Assert if invalid.
     uint32_t GetCount() const {
