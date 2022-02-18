@@ -69,8 +69,7 @@ static char const * const interfaceEvtName[] = {
 Traffic::Traffic() :
     Active((QStateHandler)&Traffic::InitialPseudoState, TRAFFIC, "TRAFFIC"),
     m_lampNS(LAMP_NS, "LAMP_NS"), m_lampEW(LAMP_EW, "LAMP_EW"),
-    m_carWaiting(false), m_waitTimer(GetHsmn(), WAIT_TIMER),
-    m_idleTimer(GetHsmn(), IDLE_TIMER), m_blinkTimer(GetHsmn(), BLINK_TIMER){
+    m_waitTimer(GetHsmn(), WAIT_TIMER) {
     SET_EVT_NAME(TRAFFIC);
 }
 
@@ -143,15 +142,105 @@ QState Traffic::Started(Traffic * const me, QEvt const * const e) {
             EVENT(e);
             return Q_HANDLED();
         }
+        case Q_INIT_SIG: {
+            return Q_TRAN(&Traffic::NSGo);
+        }
         case TRAFFIC_STOP_REQ: {
             EVENT(e);
             Evt const &req = EVT_CAST(*e);
+
+            // @todo Need to wait for response.
+            me->Send(new LampResetReq(), LAMP_NS);
+            me->Send(new LampResetReq(), LAMP_EW);
 
             me->SendCfm(new TrafficStopCfm(ERROR_SUCCESS), req);
             return Q_TRAN(&Traffic::Stopped);
         }
     }
     return Q_SUPER(&Traffic::Root);
+}
+
+QState Traffic::NSGo(Traffic *me, QEvt const *e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            me->Send(new LampRedReq(), LAMP_EW);
+            me->Send(new LampGreenReq(), LAMP_NS);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case TRAFFIC_CAR_EW_REQ: {
+            EVENT(e);
+            return Q_TRAN(&Traffic::NSSlow);
+        }
+    }
+    return Q_SUPER(&Traffic::Started);;
+}
+
+QState Traffic::NSSlow(Traffic *me, QEvt const *e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            me->Send(new LampYellowReq(), LAMP_NS);
+            me->m_waitTimer.Start(NS_SLOW_TIMEOUT_MS);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            me->m_waitTimer.Stop();
+            return Q_HANDLED();
+        }
+        case WAIT_TIMER: {
+            EVENT(e);
+            return Q_TRAN(&Traffic::EWGo);
+        }
+    }
+    return Q_SUPER(&Traffic::Started);
+}
+
+QState Traffic::EWGo(Traffic *me, QEvt const *e) {
+    switch (e->sig)
+    {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            me->Send(new LampRedReq(), LAMP_NS);
+            me->Send(new LampGreenReq(), LAMP_EW);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case TRAFFIC_CAR_NS_REQ: {
+            EVENT(e);
+            return Q_TRAN(&Traffic::EWSlow);
+        }
+    }
+    return Q_SUPER(&Traffic::Started);
+}
+
+QState Traffic::EWSlow(Traffic *me, QEvt const *e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            me->Send(new LampYellowReq(), LAMP_EW);
+            me->m_waitTimer.Start(EW_SLOW_TIMEOUT_MS);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            me->m_waitTimer.disarm();
+            return Q_HANDLED();
+        }
+        case WAIT_TIMER: {
+            EVENT(e);
+            return Q_TRAN(&Traffic::NSGo);
+        }
+    }
+    return Q_SUPER(&Traffic::Started);
 }
 
 /*

@@ -60,27 +60,22 @@ protected:
     static QState Root(Traffic * const me, QEvt const * const e);
         static QState Stopped(Traffic * const me, QEvt const * const e);
         static QState Started(Traffic * const me, QEvt const * const e);
+           static QState NSGo(Traffic * const me, QEvt const * const e);
+           static QState NSSlow(Traffic * const me, QEvt const * const e);
+           static QState EWGo(Traffic * const me, QEvt const * const e);
+           static QState EWSlow(Traffic * const me, QEvt const * const e);
 
     Lamp m_lampNS;          // Orthogonal region for the NS lamp.
     Lamp m_lampEW;          // Orthogonal region for the EW lamp.
-    bool m_carWaiting;      // Remembers if a car is waiting in either NS or EW direction.
 
     enum {
-        NS_MIN_WAIT_TIMEOUT_MS = 20000,
         NS_SLOW_TIMEOUT_MS     = 3000,
-        EW_MIN_WAIT_TIMEOUT_MS = 10000,
         EW_SLOW_TIMEOUT_MS     = 3000,
-        EW_IDLE_TIMEOUT_MS     = 15000,
-        BLINK_TIMEOUT_MS       = 1000
     };
-    Timer m_waitTimer;       // Timer used to wait for the minimum wait duration or the yellow light (slow-down) duration in either direction.
-    Timer m_idleTimer;       // Timer used to detect idle condition in EW direction.
-    Timer m_blinkTimer;      // Timer used to blink a stop sign.
+    Timer m_waitTimer;       // Timer used to wait for the yellow light (slow-down) duration in either direction.
 
 #define TRAFFIC_TIMER_EVT \
-    ADD_EVT(WAIT_TIMER) \
-    ADD_EVT(IDLE_TIMER) \
-    ADD_EVT(BLINK_TIMER)
+    ADD_EVT(WAIT_TIMER)
 
 // Placeholder only.
 #define TRAFFIC_INTERNAL_EVT \
