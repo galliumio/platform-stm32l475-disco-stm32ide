@@ -111,8 +111,8 @@ protected:
 
     class Failed : public ErrorEvt {
     public:
-        Failed(Hsmn hsmn, Error error, Hsmn origin, Reason reason) :
-            ErrorEvt(FAILED, hsmn, hsmn, 0, error, origin, reason) {}
+        Failed(Error error, Hsmn origin, Reason reason) :
+            ErrorEvt(FAILED, error, origin, reason) {}
     };
 };
 

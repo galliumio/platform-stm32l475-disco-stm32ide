@@ -262,7 +262,7 @@ QState System::Starting1(System * const me, QEvt const * const e) {
             ERROR_EVENT(cfm);
             bool allReceived;
             if (!me->CheckCfm(cfm, allReceived)) {
-                me->Raise(new Failed(me->GetHsmn(), cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
+                me->Raise(new Failed(cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
             } else if (allReceived) {
                 me->Raise(new Evt(NEXT));
             }
@@ -292,7 +292,7 @@ QState System::Starting2(System * const me, QEvt const * const e) {
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
             if (!me->CheckCfm(cfm, allReceived)) {
-                me->Raise(new Failed(me->GetHsmn(), cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
+                me->Raise(new Failed(cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
             } else if (allReceived) {
                 me->Raise(new Evt(NEXT));
             }
@@ -327,7 +327,7 @@ QState System::Starting3(System * const me, QEvt const * const e) {
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
             if (!me->CheckCfm(cfm, allReceived)) {
-                me->Raise(new Failed(me->GetHsmn(), cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
+                me->Raise(new Failed(cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
             } else if (allReceived) {
                 me->Raise(new Evt(DONE));
             }
@@ -393,7 +393,7 @@ QState System::Stopping1(System * const me, QEvt const * const e) {
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
             if (!me->CheckCfm(cfm, allReceived)) {
-                me->Raise(new Failed(me->GetHsmn(), cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
+                me->Raise(new Failed(cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
             } else if (allReceived) {
                 me->Raise(new Evt(NEXT));
             }
@@ -439,7 +439,7 @@ QState System::Stopping2(System * const me, QEvt const * const e) {
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
             if (!me->CheckCfm(cfm, allReceived)) {
-                me->Raise(new Failed(me->GetHsmn(), cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
+                me->Raise(new Failed(cfm.GetError(), cfm.GetOrigin(), cfm.GetReason()));
             } else if (allReceived) {
                 me->Raise(new Evt(DONE));
             }
