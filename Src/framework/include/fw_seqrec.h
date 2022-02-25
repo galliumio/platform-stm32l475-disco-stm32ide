@@ -98,7 +98,7 @@ protected:
 
 // Common template instantiation
 using MsgSeqRec = SeqRec<StrBuf<Msg::TO_LEN>, 8>;
-using EvtSeqRec = SeqRec<uint8_t, 16>;
+using EvtSeqRec = SeqRec<Hsmn, 16>;
 
 } // namespace FW
 
