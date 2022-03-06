@@ -44,7 +44,6 @@
 #include "fw_timer.h"
 #include "fw_evt.h"
 #include "app_hsmn.h"
-#include "SensorAccelGyro.h"
 #include "SensorAccelGyroInterface.h"
 
 using namespace QP;
@@ -67,8 +66,6 @@ protected:
             static QState On(SensorAccelGyro * const me, QEvt const * const e);
 
     Hsmn m_intHsmn;
-    I2C_HandleTypeDef &m_hal;
-    void *m_handle;               // Handle to Nucleo IKS01A1 BSP.
     AccelGyroPipe *m_pipe;        // Pipe to save accel/gyro reports/samples.
     Evt m_inEvt;                  // Static event copy of a generic incoming req to be confirmed. Added more if needed.
 

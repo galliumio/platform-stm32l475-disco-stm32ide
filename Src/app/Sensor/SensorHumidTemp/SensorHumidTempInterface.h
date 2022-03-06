@@ -52,7 +52,11 @@ namespace APP {
     ADD_EVT(SENSOR_HUMID_TEMP_START_REQ) \
     ADD_EVT(SENSOR_HUMID_TEMP_START_CFM) \
     ADD_EVT(SENSOR_HUMID_TEMP_STOP_REQ) \
-    ADD_EVT(SENSOR_HUMID_TEMP_STOP_CFM)
+    ADD_EVT(SENSOR_HUMID_TEMP_STOP_CFM) \
+    ADD_EVT(SENSOR_HUMID_TEMP_ON_REQ) \
+    ADD_EVT(SENSOR_HUMID_TEMP_ON_CFM) \
+    ADD_EVT(SENSOR_HUMID_TEMP_OFF_REQ) \
+    ADD_EVT(SENSOR_HUMID_TEMP_OFF_CFM)
 
 #undef ADD_EVT
 #define ADD_EVT(e_) e_,
@@ -65,6 +69,18 @@ enum {
 enum {
     SENSOR_HUMID_TEMP_REASON_UNSPEC = 0,
 };
+
+// Data types used in sensor events.
+class HumidTempReport
+{
+public:
+  HumidTempReport(float humidity = 0, float temperature = 0) :
+      m_humidity(humidity), m_temperature(temperature) {}
+  float m_humidity;
+  float m_temperature;
+};
+
+typedef Pipe<HumidTempReport> HumidTempPipe;
 
 class SensorHumidTempStartReq : public Evt {
 public:
@@ -94,6 +110,42 @@ class SensorHumidTempStopCfm : public ErrorEvt {
 public:
     SensorHumidTempStopCfm(Error error, Hsmn origin = HSM_UNDEF, Reason reason = 0) :
         ErrorEvt(SENSOR_HUMID_TEMP_STOP_CFM, error, origin, reason) {}
+};
+
+class SensorHumidTempOnReq : public Evt {
+public:
+    enum {
+        TIMEOUT_MS = 100
+    };
+    // @todo - Add configuration parameters, e.g. ODR.
+    SensorHumidTempOnReq(HumidTempPipe *pipe) :
+        Evt(SENSOR_HUMID_TEMP_ON_REQ), m_pipe(pipe) {}
+    HumidTempPipe *GetPipe() const { return m_pipe; }
+private:
+    HumidTempPipe *m_pipe;
+
+};
+
+class SensorHumidTempOnCfm : public ErrorEvt {
+public:
+    SensorHumidTempOnCfm(Error error, Hsmn origin = HSM_UNDEF, Reason reason = 0) :
+        ErrorEvt(SENSOR_HUMID_TEMP_ON_CFM, error, origin, reason) {}
+};
+
+class SensorHumidTempOffReq : public Evt {
+public:
+    enum {
+        TIMEOUT_MS = 100
+    };
+    // @todo - Add configuration parameters, e.g. ODR.
+    SensorHumidTempOffReq() :
+        Evt(SENSOR_HUMID_TEMP_OFF_REQ) {}
+};
+
+class SensorHumidTempOffCfm : public ErrorEvt {
+public:
+    SensorHumidTempOffCfm(Error error, Hsmn origin = HSM_UNDEF, Reason reason = 0) :
+        ErrorEvt(SENSOR_HUMID_TEMP_OFF_CFM, error, origin, reason) {}
 };
 
 } // namespace APP

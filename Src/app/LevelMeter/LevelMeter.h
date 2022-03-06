@@ -46,6 +46,7 @@
 #include "fw_seqrec.h"
 #include "app_hsmn.h"
 #include "SensorAccelGyroInterface.h"
+#include "SensorHumidTempInterface.h"
 
 using namespace QP;
 using namespace FW;
@@ -68,14 +69,19 @@ protected:
 
     enum {
         ACCEL_GYRO_PIPE_ORDER = 7,
+        HUMID_TEMP_PIPE_ORDER = 2,
     };
     AccelGyroReport m_accelGyroStor[1 << ACCEL_GYRO_PIPE_ORDER];
+    HumidTempReport m_humidTempStor[1 << HUMID_TEMP_PIPE_ORDER];
     AccelGyroPipe m_accelGyroPipe;
+    HumidTempPipe m_humidTempPipe;
     AccelGyroReport m_avgReport;
     float m_pitch;              // Average pitch in degree.
     float m_roll;               // Average roll in degree.
     float m_pitchThres;         // Pitch alarm threshold in degree (applies to negative threshold).
     float m_rollThres;          // Roll alarm threshold in degree (applies to negative threshold).
+    float m_humidity;           // Latest processor humidity measurement.
+    float m_temperature;        // Latest processor temperature measurement.
     Evt m_inEvt;                // Static event copy of a generic incoming req to be confirmed. Added more if needed.
     MsgSeqRec m_msgSeq;         // Keeps track of sequence numbers of outgoing messages.
 

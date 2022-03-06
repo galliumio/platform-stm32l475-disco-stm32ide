@@ -44,6 +44,7 @@
 #include "fw_timer.h"
 #include "fw_evt.h"
 #include "app_hsmn.h"
+#include "SensorHumidTempInterface.h"
 
 using namespace QP;
 using namespace FW;
@@ -61,21 +62,28 @@ protected:
         static QState Starting(SensorHumidTemp * const me, QEvt const * const e);
         static QState Stopping(SensorHumidTemp * const me, QEvt const * const e);
         static QState Started(SensorHumidTemp * const me, QEvt const * const e);
+            static QState Off(SensorHumidTemp * const me, QEvt const * const e);
+            static QState On(SensorHumidTemp * const me, QEvt const * const e);
 
     Hsmn m_drdyHsmn;
-    I2C_HandleTypeDef &m_hal;
-    Timer m_stateTimer;
-    void *m_handle;               // Handle to Nucleo SENSOR BSP.
+    HumidTempPipe *m_pipe;        // Pipe to save humidity/temperature reports/samples.
     Evt m_inEvt;                  // Static event copy of a generic incoming req to be confirmed. Added more if needed.
 
+    enum {
+        POLL_TIMEOUT_MS = 1000,
+    };
+    Timer m_stateTimer;
+    Timer m_pollTimer;
 
 #define SENSOR_HUMID_TEMP_TIMER_EVT \
-    ADD_EVT(STATE_TIMER)
+    ADD_EVT(STATE_TIMER) \
+    ADD_EVT(POLL_TIMER)
 
 #define SENSOR_HUMID_TEMP_INTERNAL_EVT \
-    ADD_EVT(START) \
     ADD_EVT(DONE) \
-    ADD_EVT(FAILED)
+    ADD_EVT(FAILED) \
+    ADD_EVT(TURNED_ON) \
+    ADD_EVT(TURNED_OFF)
 
 #undef ADD_EVT
 #define ADD_EVT(e_) e_,

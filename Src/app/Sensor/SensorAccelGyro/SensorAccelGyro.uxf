@@ -24,14 +24,14 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
 
 
 // This text will be stored with each diagram;  use it for notes.</help_text>
-  <zoom_level>9</zoom_level>
+  <zoom_level>11</zoom_level>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>153</x>
+      <x>143</x>
       <y>0</y>
-      <w>1089</w>
-      <h>972</h>
+      <w>1331</w>
+      <h>1188</h>
     </coordinates>
     <panel_attributes>Iks01a1AccelGyro::Root
 --
@@ -46,10 +46,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>549</x>
-      <y>63</y>
-      <w>297</w>
-      <h>99</h>
+      <x>627</x>
+      <y>77</y>
+      <w>363</w>
+      <h>121</h>
     </coordinates>
     <panel_attributes>Stopped
 --
@@ -63,10 +63,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>207</x>
-      <y>540</y>
-      <w>972</w>
-      <h>387</h>
+      <x>209</x>
+      <y>660</y>
+      <w>1188</w>
+      <h>473</h>
     </coordinates>
     <panel_attributes>Started
 --
@@ -80,10 +80,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>855</x>
-      <y>261</y>
-      <w>324</w>
-      <h>198</h>
+      <x>1001</x>
+      <y>319</y>
+      <w>396</w>
+      <h>242</h>
     </coordinates>
     <panel_attributes>Stopping
 --
@@ -104,10 +104,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>207</x>
-      <y>261</y>
-      <w>324</w>
-      <h>198</h>
+      <x>209</x>
+      <y>319</y>
+      <w>396</w>
+      <h>242</h>
     </coordinates>
     <panel_attributes>Starting
 --
@@ -126,10 +126,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>351</x>
-      <y>108</y>
-      <w>216</w>
-      <h>171</h>
+      <x>385</x>
+      <y>132</y>
+      <w>264</w>
+      <h>209</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>220.0;10.0;10.0;10.0;10.0;170.0</additional_attributes>
@@ -137,10 +137,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>522</x>
-      <y>351</y>
-      <w>351</w>
-      <h>27</h>
+      <x>594</x>
+      <y>429</y>
+      <w>429</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;370.0;10.0</additional_attributes>
@@ -148,10 +148,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>351</x>
-      <y>450</y>
-      <w>27</w>
-      <h>108</h>
+      <x>385</x>
+      <y>550</y>
+      <w>33</w>
+      <h>132</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
@@ -159,21 +159,21 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>594</x>
-      <y>27</y>
-      <w>117</w>
-      <h>54</h>
+      <x>737</x>
+      <y>33</y>
+      <w>88</w>
+      <h>66</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;110.0;10.0;110.0;40.0</additional_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>837</x>
-      <y>108</y>
-      <w>189</w>
-      <h>171</h>
+      <x>979</x>
+      <y>132</y>
+      <w>231</w>
+      <h>209</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>190.0;170.0;190.0;10.0;10.0;10.0</additional_attributes>
@@ -181,10 +181,10 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>900</x>
-      <y>180</y>
-      <w>18</w>
-      <h>18</h>
+      <x>1056</x>
+      <y>220</y>
+      <w>22</w>
+      <h>22</h>
     </coordinates>
     <panel_attributes>type=final</panel_attributes>
     <additional_attributes/>
@@ -192,10 +192,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>900</x>
-      <y>189</y>
-      <w>27</w>
-      <h>90</h>
+      <x>1056</x>
+      <y>231</y>
+      <w>33</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
@@ -203,10 +203,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>999</x>
-      <y>450</y>
-      <w>261</w>
-      <h>81</h>
+      <x>1177</x>
+      <y>550</y>
+      <w>319</w>
+      <h>99</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>270.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
@@ -214,10 +214,10 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>360</x>
-      <y>171</y>
-      <w>225</w>
-      <h>45</h>
+      <x>396</x>
+      <y>209</y>
+      <w>275</w>
+      <h>55</h>
     </coordinates>
     <panel_attributes>SENSOR_ACCEL_GYRO_START_REQ
 / m_inEvt = req
@@ -227,10 +227,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>540</x>
-      <y>315</y>
-      <w>297</w>
-      <h>45</h>
+      <x>616</x>
+      <y>385</y>
+      <w>363</w>
+      <h>55</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
 / SendCfm(SENSOR_ACCEL_GYRO_START_CFM(error),
@@ -241,10 +241,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1008</x>
-      <y>171</y>
-      <w>225</w>
-      <h>27</h>
+      <x>1188</x>
+      <y>209</y>
+      <w>275</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>DONE
 style=wordwrap</panel_attributes>
@@ -253,10 +253,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>783</x>
-      <y>216</y>
-      <w>144</w>
-      <h>27</h>
+      <x>913</x>
+      <y>264</y>
+      <w>176</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
 style=wordwrap</panel_attributes>
@@ -265,10 +265,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>360</x>
-      <y>477</y>
-      <w>306</w>
-      <h>45</h>
+      <x>396</x>
+      <y>583</y>
+      <w>374</w>
+      <h>55</h>
     </coordinates>
     <panel_attributes>DONE
 / SendCfm(SENSOR_ACCEL_GYRO_START_CFM(SUCCESS),
@@ -279,10 +279,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>801</x>
-      <y>486</y>
-      <w>216</w>
-      <h>27</h>
+      <x>935</x>
+      <y>594</y>
+      <w>264</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>SENSOR_ACCEL_GYRO_STOP_REQ/ defer
 style=wordwrap</panel_attributes>
@@ -291,43 +291,21 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>594</x>
-      <y>27</y>
-      <w>18</w>
-      <h>18</h>
+      <x>737</x>
+      <y>33</y>
+      <w>22</w>
+      <h>22</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>270</x>
-      <y>639</y>
-      <w>315</w>
-      <h>198</h>
-    </coordinates>
-    <panel_attributes>Off
---
-SENSOR_ACCEL_GYRO_ON_REQ(pipe)
-/ save pipe to m_pipe,
-  enable data ready interrupt,
-  if (success)
-      SendCfm(SENSOR_ACCEL_GYRO_ON_CFM(SUCCESS))
-      Raise(TURNED_ON)
-  else
-      SendCfm(SENSOR_ACCEL_GYRO_ON_CFM(FAIL))
-valign=top
-</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>333</x>
-      <y>603</y>
-      <w>18</w>
-      <h>18</h>
+      <x>385</x>
+      <y>737</y>
+      <w>22</w>
+      <h>22</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -335,68 +313,43 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>333</x>
-      <y>603</y>
-      <w>117</w>
-      <h>54</h>
+      <x>374</x>
+      <y>737</y>
+      <w>99</w>
+      <h>77</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;110.0;10.0;110.0;40.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>810</x>
-      <y>639</y>
-      <w>306</w>
-      <h>198</h>
-    </coordinates>
-    <panel_attributes>On
---
-entry/ Send(GPIO_IN_ACTIVE_IND, GetHsmn())
-
-GPIO_IN_ACTIVE_IND
-/ BSP_ACCELERO_AccGetXYZ(data),
-  save data to m_pipe
-  
-SENSOR_ACCEL_GYRO_OFF_REQ
-/ m_pipe = null,
-  disable data ready interrupt,
-  SendCfm(SENSOR_ACCEL_GYRO_OFF_CFM(SUCCESS)),
-  Raise(TURNED_OFF)
-valign=top
-</panel_attributes>
-    <additional_attributes/>
+    <additional_attributes>10.0;10.0;70.0;10.0;70.0;50.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
-      <y>693</y>
-      <w>252</w>
-      <h>27</h>
+      <x>627</x>
+      <y>836</y>
+      <w>363</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;260.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;310.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
-      <y>765</y>
-      <w>252</w>
-      <h>27</h>
+      <x>627</x>
+      <y>924</y>
+      <w>363</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>260.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>310.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>657</x>
-      <y>675</y>
-      <w>72</w>
-      <h>27</h>
+      <x>759</x>
+      <y>825</y>
+      <w>88</w>
+      <h>33</h>
     </coordinates>
     <panel_attributes>TURNED_ON
 style=wordwrap</panel_attributes>
@@ -405,13 +358,59 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>648</x>
-      <y>747</y>
-      <w>108</w>
-      <h>36</h>
+      <x>748</x>
+      <y>913</y>
+      <w>132</w>
+      <h>44</h>
     </coordinates>
     <panel_attributes>TURNED_OFF
 style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>253</x>
+      <y>792</y>
+      <w>385</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>Off
+--
+SENSOR_ACCEL_GYRO_ON_REQ(pipe)
+/ if (pipe invalid)
+    SendCfm(SENSOR_ACCEL_GYRO_ON_CFM(PARAM))
+  else
+    save pipe to m_pipe,
+    SendCfm(SENSOR_ACCEL_GYRO_ON_CFM(SUCCESS))
+    Raise(TURNED_ON)
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>968</x>
+      <y>792</y>
+      <w>385</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>On
+--
+entry/ enable data ready interrupt,
+       Send(GPIO_IN_ACTIVE_IND, GetHsmn())
+exit/ m_pipe = null, disable data ready interrupt
+
+GPIO_IN_ACTIVE_IND
+/ BSP_ACCELERO_AccGetXYZ(data),
+  save data to m_pipe
+  
+SENSOR_ACCEL_GYRO_OFF_REQ
+/ SendCfm(SENSOR_ACCEL_GYRO_OFF_CFM(SUCCESS)),
+  Raise(TURNED_OFF)
+valign=top
+</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

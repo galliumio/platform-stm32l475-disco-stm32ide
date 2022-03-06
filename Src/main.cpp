@@ -159,8 +159,10 @@ int main(void)
     Log::Off(CONSOLE_UART1);
     Log::Off(ILI9341);
     Log::Off(SENSOR_ACCEL_GYRO);
+    Log::Off(SENSOR_HUMID_TEMP);
     Log::Off(ACCEL_GYRO_INT);
     Log::Off(LEVEL_METER);
+    Log::Off(WIFI);
     Log::Off(NODE_PARSER);
 
     // Start active objects.

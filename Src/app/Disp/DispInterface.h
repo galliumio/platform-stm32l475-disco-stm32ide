@@ -79,6 +79,7 @@ enum {
 #define COLOR24_BLACK        0x000000      ///<   0,   0,   0
 #define COLOR24_WHITE        0xFFFFFF      ///< 255, 255, 255
 #define COLOR24_GRAY         0x808080
+#define COLOR24_DARK_GRAY    0x202020
 #define COLOR24_RED          0xFF0000
 #define COLOR24_GREEN        0x00FF00
 #define COLOR24_BLUE         0x0000FF

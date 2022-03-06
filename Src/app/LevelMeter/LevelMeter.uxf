@@ -28,9 +28,9 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>30</x>
+      <x>0</x>
       <y>0</y>
-      <w>1210</w>
+      <w>1250</w>
       <h>1060</h>
     </coordinates>
     <panel_attributes>LevelMeter::Root
@@ -45,7 +45,7 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>460</x>
+      <x>470</x>
       <y>70</y>
       <w>340</w>
       <h>110</h>
@@ -62,21 +62,23 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>810</x>
+      <x>800</x>
       <y>290</y>
-      <w>360</w>
+      <w>420</w>
       <h>220</h>
     </coordinates>
     <panel_attributes>Stopping
 --
 entry/ start m_stateTimer,
        SendReq(DISP_STOP_REQ),
-       SendReq(SESNOR_ACCEL_GYRO_OFF_REQ)
+       SendReq(SESNOR_ACCEL_GYRO_OFF_REQ),
+       SendReq(SENSOR_HUMID_TEMP_OFF_REQ)
 exit/ stop m_stateTimer, recall
 
 LEVEL_METER_STOP_REQ/ defer
 
-DISP_STOP_CFM, SENSOR_ACCEL_GYRO_OFF_CFM
+DISP_STOP_CFM, SENSOR_ACCEL_GYRO_OFF_CFM,
+SENSOR_HUMID_TEMP_OFF_CFM
 / if (!CheckCfm()) Raise(FAILED(error))
   else if (allReceived) Raise(DONE)
     
@@ -87,19 +89,21 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>90</x>
+      <x>50</x>
       <y>290</y>
-      <w>360</w>
+      <w>410</w>
       <h>220</h>
     </coordinates>
     <panel_attributes>Starting
 --
 entry/ start m_stateTimer,
        SendReq(DISP_START_REQ), 
-       SendReq(SENSOR_ACCEL_GYRO_ON_REQ(pipe)
+       SendReq(SENSOR_ACCEL_GYRO_ON_REQ(m_accelGyroPipe)),
+       SendReq(SENSOR_HUMID_TEMP_ON_REQ(m_humidTempPipe))
 exit/ stop m_stateTimer
 
-DISP_START_CFM, SENSOR_ACCEL_GYRO_ON_CFM
+DISP_START_CFM,
+SENSOR_ACCEL_GYRO_ON_CFM, SENSOR_HUMID_TEMP_ON_CFM
 / if (!CheckCfm()) Raise(FAILED(error))
   else if (allReceived) Raise(DONE)
    
@@ -110,7 +114,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>250</x>
+      <x>260</x>
       <y>120</y>
       <w>230</w>
       <h>190</h>
@@ -121,18 +125,18 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
+      <x>450</x>
       <y>390</y>
-      <w>390</w>
+      <w>370</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;370.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;350.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>250</x>
+      <x>260</x>
       <y>500</y>
       <w>30</w>
       <h>120</h>
@@ -143,7 +147,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>520</x>
+      <x>530</x>
       <y>30</y>
       <w>130</w>
       <h>60</h>
@@ -154,7 +158,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>790</x>
+      <x>800</x>
       <y>120</y>
       <w>210</w>
       <h>190</h>
@@ -165,7 +169,7 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>840</x>
+      <x>850</x>
       <y>200</y>
       <w>20</w>
       <h>20</h>
@@ -176,7 +180,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>840</x>
+      <x>850</x>
       <y>210</y>
       <w>30</w>
       <h>100</h>
@@ -187,7 +191,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>970</x>
+      <x>980</x>
       <y>500</y>
       <w>290</w>
       <h>90</h>
@@ -198,7 +202,7 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>260</x>
+      <x>270</x>
       <y>200</y>
       <w>190</w>
       <h>40</h>
@@ -211,7 +215,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>470</x>
+      <x>480</x>
       <y>360</y>
       <w>290</w>
       <h>50</h>
@@ -224,7 +228,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>980</x>
+      <x>990</x>
       <y>190</y>
       <w>250</w>
       <h>30</h>
@@ -236,7 +240,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>710</x>
+      <x>720</x>
       <y>250</y>
       <w>160</w>
       <h>30</h>
@@ -248,7 +252,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>260</x>
+      <x>270</x>
       <y>540</y>
       <w>310</w>
       <h>40</h>
@@ -261,7 +265,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>780</x>
+      <x>790</x>
       <y>540</y>
       <w>240</w>
       <h>30</h>
@@ -273,7 +277,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>520</x>
+      <x>530</x>
       <y>30</y>
       <w>20</w>
       <h>20</h>
@@ -284,7 +288,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>290</x>
+      <x>300</x>
       <y>840</y>
       <w>250</w>
       <h>150</h>
@@ -299,7 +303,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>420</x>
+      <x>430</x>
       <y>790</y>
       <w>90</w>
       <h>70</h>
@@ -310,7 +314,7 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>410</x>
+      <x>420</x>
       <y>790</y>
       <w>20</w>
       <h>20</h>
@@ -321,7 +325,7 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>720</x>
+      <x>730</x>
       <y>810</y>
       <w>400</w>
       <h>190</h>
@@ -331,7 +335,8 @@ valign=top
 entry
 / Send(DISP_DRAW_BEGIN_REQ, ILI9341),
   Send(DISP_DRAW_TEXT_REQ, ILI9341) based on 
-    m_pitch, m_roll, m_pitchThres, m_rollThres)
+    m_pitch, m_roll, m_pitchThres, m_rollThres,
+    m_humidity and m_temperature)
   Send(DISP_DRAW_END_REQm, ILI9341)
   start m_stateTimer (@todo)
   
@@ -348,7 +353,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>530</x>
+      <x>540</x>
       <y>880</y>
       <w>210</w>
       <h>30</h>
@@ -359,7 +364,7 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>600</x>
+      <x>610</x>
       <y>860</y>
       <w>100</w>
       <h>30</h>
@@ -371,7 +376,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>530</x>
+      <x>540</x>
       <y>930</y>
       <w>210</w>
       <h>30</h>
@@ -382,7 +387,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>570</x>
+      <x>580</x>
       <y>910</y>
       <w>130</w>
       <h>30</h>
@@ -394,7 +399,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>800</x>
+      <x>810</x>
       <y>650</y>
       <w>190</w>
       <h>80</h>
@@ -409,7 +414,7 @@ an alert when exceeded.</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>100</x>
+      <x>110</x>
       <y>600</y>
       <w>1070</w>
       <h>430</h>
@@ -417,12 +422,15 @@ an alert when exceeded.</panel_attributes>
     <panel_attributes>Started
 --
 entry/ start periodic m_reportTimer,
-       m_pitch = 0, m_roll = 0, m_pitchThres = 90, m_rollThres = 90 
+       m_pitch = 0, m_roll = 0, m_pitchThres = 90, m_rollThres = 90,
+       m_humidity = 0, m_temperature = 0 
 exit/ stop m_reportTimer
 REPORT_TIMER
-/ read all samples from pipe,
+/ read all samples from m_accelGyropipe,
   calcuate average xyz acceleration,
   calculate m_pitch and m_roll,
+  read all samples from m_humidTempPipe,
+  save samples to m_humidy and m_temperature,
   Raise(REDRAW),
   SendIndMsg(LEVEL_METER_DATA_IND(SensorDataIndMsg(m_pitch, m_roll)), NODE)
   
