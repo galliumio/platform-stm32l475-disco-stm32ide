@@ -74,7 +74,8 @@ LevelMeter::LevelMeter() :
     Active((QStateHandler)&LevelMeter::InitialPseudoState, LEVEL_METER, "LEVEL_METER"),
     m_accelGyroPipe(m_accelGyroStor, ACCEL_GYRO_PIPE_ORDER),
     m_humidTempPipe(m_humidTempStor, HUMID_TEMP_PIPE_ORDER),
-    m_pitch(0), m_roll(0), m_pitchThres(90), m_rollThres(90), m_inEvt(QEvt::STATIC_EVT), m_msgSeq(""),
+    m_pitch(0.0), m_roll(0.0), m_pitchThres(45.0), m_rollThres(45.0),
+    m_humidity(0.0), m_temperature(0.0), m_inEvt(QEvt::STATIC_EVT), m_msgSeq(""),
     m_stateTimer(GetHsmn(), STATE_TIMER),
     m_reportTimer(GetHsmn(), REPORT_TIMER) {
     SET_EVT_NAME(LEVEL_METER);
@@ -248,8 +249,8 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
             EVENT(e);
             me->m_pitch = 0.0;
             me->m_roll = 0.0;
-            me->m_pitchThres = 90.0;
-            me->m_rollThres = 90.0;
+            me->m_pitchThres = 45.0;
+            me->m_rollThres = 45.0;
             me->m_humidity = 0.0;
             me->m_temperature = 0.0;
             me->m_reportTimer.Start(REPORT_TIMEOUT_MS, Timer::PERIODIC);
