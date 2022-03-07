@@ -149,7 +149,6 @@ QState LevelMeter::Starting(LevelMeter * const me, QEvt const * const e) {
             me->m_stateTimer.Start(timeout);
             me->SendReq(new DispStartReq(), ILI9341, true);
             me->SendReq(new SensorAccelGyroOnReq(&me->m_accelGyroPipe), SENSOR_ACCEL_GYRO, false);
-            me->SendReq(new SensorHumidTempOnReq(&me->m_humidTempPipe), SENSOR_HUMID_TEMP, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -158,8 +157,7 @@ QState LevelMeter::Starting(LevelMeter * const me, QEvt const * const e) {
             return Q_HANDLED();
         }
         case DISP_START_CFM:
-        case SENSOR_ACCEL_GYRO_ON_CFM:
-        case SENSOR_HUMID_TEMP_ON_CFM: {
+        case SENSOR_ACCEL_GYRO_ON_CFM: {
             EVENT(e);
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
@@ -200,7 +198,6 @@ QState LevelMeter::Stopping(LevelMeter * const me, QEvt const * const e) {
             me->m_stateTimer.Start(timeout);
             me->SendReq(new DispStopReq(), ILI9341, true);
             me->SendReq(new SensorAccelGyroOffReq(), SENSOR_ACCEL_GYRO, false);
-            me->SendReq(new SensorHumidTempOffReq(), SENSOR_HUMID_TEMP, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -215,8 +212,7 @@ QState LevelMeter::Stopping(LevelMeter * const me, QEvt const * const e) {
             return Q_HANDLED();
         }
         case DISP_STOP_CFM:
-        case SENSOR_ACCEL_GYRO_OFF_CFM:
-        case SENSOR_HUMID_TEMP_OFF_CFM: {
+        case SENSOR_ACCEL_GYRO_OFF_CFM: {
             EVENT(e);
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
@@ -300,16 +296,6 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
             */
             LOG("pitch=%06.2f, roll=%06.2f", me->m_pitch, me->m_roll);
 
-            // Reads humidity and temperature data.
-            // Since they are slow changing, it's sufficient to save the last values.
-            while (me->m_humidTempPipe.GetUsedCount()) {
-                HumidTempReport report;
-                me->m_humidTempPipe.Read(&report, 1);
-                me->m_humidity = report.m_humidity;
-                me->m_temperature = report.m_temperature;
-            }
-            LOG("humid=%f, temp=%f", me->m_humidity, me->m_temperature);
-
             me->Raise(new Evt(REDRAW));
             // @todo Currently when the destination (to) of a msg is undefined, the server sends to all nodes.
             //       This will be changed to pub-sub in the future.
@@ -360,11 +346,6 @@ QState LevelMeter::Redrawing(LevelMeter * const me, QEvt const * const e) {
             me->Send(new DispDrawTextReq(buf, 10, 150, COLOR24_BLACK, COLOR24_WHITE,4), ILI9341);
             snprintf(buf, sizeof(buf), "RT= %05.2f", me->m_rollThres);
             me->Send(new DispDrawTextReq(buf, 10, 210, COLOR24_BLACK, COLOR24_WHITE,4), ILI9341);
-
-            snprintf(buf, sizeof(buf), "H= %05.2f", me->m_humidity);
-            me->Send(new DispDrawTextReq(buf, 10, 280, COLOR24_DARK_GRAY, COLOR24_WHITE,2), ILI9341);
-            snprintf(buf, sizeof(buf), "T= %05.2f", me->m_temperature);
-            me->Send(new DispDrawTextReq(buf, 120, 280, COLOR24_DARK_GRAY, COLOR24_WHITE,2), ILI9341);
             me->Send(new DispDrawEndReq(), ILI9341);
             return Q_HANDLED();
         }

@@ -235,10 +235,6 @@ QState SensorHumidTemp::Started(SensorHumidTemp * const me, QEvt const * const e
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
-            HSENSOR_Status_TypDef hStatus = static_cast<HSENSOR_Status_TypDef>(BSP_HSENSOR_Init());
-            FW_ASSERT(hStatus == HSENSOR_OK);
-            TSENSOR_Status_TypDef tStatus = static_cast<TSENSOR_Status_TypDef>(BSP_TSENSOR_Init());
-            FW_ASSERT(tStatus == TSENSOR_OK);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -246,81 +242,8 @@ QState SensorHumidTemp::Started(SensorHumidTemp * const me, QEvt const * const e
             // @todo Missing API in BSP to de-initialize humidity and temperature sensor.
             return Q_HANDLED();
         }
-        case Q_INIT_SIG: {
-            return Q_TRAN(&SensorHumidTemp::Off);
-        }
     }
     return Q_SUPER(&SensorHumidTemp::Root);
-}
-
-QState SensorHumidTemp::Off(SensorHumidTemp * const me, QEvt const * const e) {
-    switch (e->sig) {
-        case Q_ENTRY_SIG: {
-            EVENT(e);
-            return Q_HANDLED();
-        }
-        case Q_EXIT_SIG: {
-            EVENT(e);
-            return Q_HANDLED();
-        }
-        case SENSOR_HUMID_TEMP_ON_REQ: {
-            EVENT(e);
-            SensorHumidTempOnReq const &req = static_cast<SensorHumidTempOnReq const &>(*e);
-            if (!req.GetPipe()) {
-                me->SendCfm(new SensorHumidTempOnCfm(ERROR_PARAM), req);
-            } else {
-                me->m_pipe = req.GetPipe();
-                me->SendCfm(new SensorHumidTempOnCfm(ERROR_SUCCESS), req);
-                me->Raise(new Evt(TURNED_ON));
-            }
-            return Q_HANDLED();
-        }
-        case TURNED_ON: {
-             EVENT(e);
-             return Q_TRAN(&SensorHumidTemp::On);
-         }
-    }
-    return Q_SUPER(&SensorHumidTemp::Started);
-}
-
-QState SensorHumidTemp::On(SensorHumidTemp * const me, QEvt const * const e) {
-    switch (e->sig) {
-        case Q_ENTRY_SIG: {
-            EVENT(e);
-            me->m_pollTimer.Start(POLL_TIMEOUT_MS, Timer::PERIODIC);
-            return Q_HANDLED();
-        }
-        case Q_EXIT_SIG: {
-            EVENT(e);
-            me->m_pipe = NULL;
-            me->m_pollTimer.Stop();
-            return Q_HANDLED();
-        }
-        case POLL_TIMER: {
-            FW_ASSERT(me->m_pipe);
-            float humidity = BSP_HSENSOR_ReadHumidity();
-            float temperature = BSP_TSENSOR_ReadTemp();
-            LOG("Humidity = %f Temp = %f", humidity, temperature);
-            HumidTempReport report(humidity, temperature);
-            uint32_t count = me->m_pipe->Write(&report, 1);
-            if (count != 1) {
-                WARNING("Pipe full");
-            }
-            return Q_HANDLED();
-        }
-        case SENSOR_HUMID_TEMP_OFF_REQ: {
-            EVENT(e);
-            SensorHumidTempOffReq const &req = static_cast<SensorHumidTempOffReq const &>(*e);
-            me->SendCfm(new SensorHumidTempOffCfm(ERROR_SUCCESS), req);
-            me->Raise(new Evt(TURNED_OFF));
-            return Q_HANDLED();
-        }
-        case TURNED_OFF: {
-             EVENT(e);
-             return Q_TRAN(&SensorHumidTemp::Off);
-        }
-    }
-    return Q_SUPER(&SensorHumidTemp::Started);
 }
 
 /*
