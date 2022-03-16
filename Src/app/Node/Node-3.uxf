@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -28,14 +28,13 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>0</x>
+      <x>104</x>
       <y>0</y>
-      <w>1560</w>
+      <w>1469</w>
       <h>1430</h>
     </coordinates>
     <panel_attributes>Connected
 --
-TODO - Add other NODE_PARSER_MSG_IND handling and send events to other HSM.
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -43,32 +42,31 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>104</x>
+      <x>208</x>
       <y>143</y>
-      <w>1352</w>
-      <h>741</h>
+      <w>1261</w>
+      <h>598</h>
     </coordinates>
     <panel_attributes>Normal
 --
-entry/ start pingReqTimer(1000ms, PERIODIC)
+entry/ start pingReqTimer(3s, PERIODIC)
 exit/ stop pingReqTimer, stop pingCfmTimer
-PING_REQ_TIMER/ pingTime = current time, 
-                pingSeq = GEN_SEQ(),
-                SendMsg(SrvPingReqMsg(pingSeq))
+
+PING_REQ_TIMER/ m_pingTime = current time, 
+                m_pingSeq = GEN_SEQ(),
+                SendMsg(SrvPingReqMsg, m_srvId, m_pingSeq)
                 start pingCfmTimer(600ms, ONCE)
-NODE_PARSER_MSG_IND
-/ if (msg == SrvPingCfmMsg &amp;&amp; success)
-    stop pingCfmTimer
-  else
-    evt = HandleMsg(msg)
-    Post(evt)
+
+NODE_PARSER_MSG_IND[SrvPingCfmMsg]
+/ if (seq == m_pingSeq &amp;&amp; success) stop pingCfmTimer
+NODE_PARSER_MSG_IND[other msg recognized]
+/ evt = HandleMsg(ind, to)
+  Send(evt, to)
 
 LEVEL_METER_CONTROL_CFM,
 LEVEL_METER_DATA_IND
 / msg = get message from event
-  write msg to dataOutFifo
-  if (write success &amp;&amp; fifo was not empty)
-    ^WIFI_WRITE_REQ to WIFI
+  SendMsg(msg)
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -76,22 +74,23 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>104</x>
+      <x>208</x>
       <y>1040</y>
-      <w>1352</w>
+      <w>1261</w>
       <h>312</h>
     </coordinates>
     <panel_attributes>RecoveryWait
 --
 entry/ start recoveryWaitTimer(5s)
 exit/ stop recoveryWaitTimer
-RECOVERY_WAIT_TIMER/ ^^SRV_ERROR
-NODE_PARSER_MSG_IND[SrvPingCfmMsg &amp;&amp; seq == pingSeq &amp;&amp; success]
-/ if (rsp time &lt; 400ms) ^^RECOVERED
-  else 
-    pingTime = current time, 
-    pingSeq = GEN_SEQ(),
-    SendMsg(SrvPingReqMsg(pingSeq))
+RECOVERY_WAIT_TIMER/ Raise(SRV_ERROR)
+NODE_PARSER_MSG_IND[SrvPingCfmMsg]
+/ if (seq == m_pingSeq &amp;&amp; success)
+    if (rsp time &lt; 400ms) Raise(RECOVERED)
+    else 
+      m_pingTime = current time, 
+      m_pingSeq = GEN_SEQ(),
+      SendMsg(SrvPingReqMsg, m_srvId, m_pingSeq)
 
 TODO - Add handling of events from other HSM.
        For critical msgs, defer them.
@@ -104,8 +103,8 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1053</x>
-      <y>936</y>
+      <x>1118</x>
+      <y>884</y>
       <w>156</w>
       <h>39</h>
     </coordinates>
@@ -116,30 +115,30 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1027</x>
-      <y>871</y>
+      <x>1092</x>
+      <y>728</y>
       <w>39</w>
-      <h>195</h>
+      <h>338</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;240.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>507</x>
-      <y>871</y>
+      <x>572</x>
+      <y>728</y>
       <w>39</w>
-      <h>195</h>
+      <h>338</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;240.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>416</x>
-      <y>949</y>
+      <x>481</x>
+      <y>884</y>
       <w>117</w>
       <h>39</h>
     </coordinates>
@@ -150,7 +149,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>676</x>
+      <x>780</x>
       <y>91</y>
       <w>26</w>
       <h>26</h>
@@ -162,7 +161,7 @@ group=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>689</x>
+      <x>793</x>
       <y>91</y>
       <w>117</w>
       <h>78</h>
@@ -170,5 +169,35 @@ group=1</panel_attributes>
     <panel_attributes>lt=-&gt;&gt;&gt;
 group=1</panel_attributes>
     <additional_attributes>10.0;10.0;70.0;10.0;70.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>611</x>
+      <y>338</y>
+      <w>325</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>HandleMsg() checks for known msgs
+in ind. If found, it creates a 
+MsgEvt to carry the msg to the 
+destination HSM. 
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>611</x>
+      <y>442</y>
+      <w>325</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>SendMsg writes a message to
+m_dataOutFifo. If success and
+fifo was empty, it sends
+WIFI_WRITE_REQ to WIFI.
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

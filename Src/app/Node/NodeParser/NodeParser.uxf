@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -24,14 +24,14 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
 
 
 // This text will be stored with each diagram;  use it for notes.</help_text>
-  <zoom_level>9</zoom_level>
+  <zoom_level>10</zoom_level>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>459</x>
-      <y>441</y>
-      <w>81</w>
-      <h>54</h>
+      <x>580</x>
+      <y>530</y>
+      <w>90</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;
 group=3</panel_attributes>
@@ -40,10 +40,10 @@ group=3</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>450</x>
-      <y>441</y>
-      <w>18</w>
-      <h>18</h>
+      <x>570</x>
+      <y>530</y>
+      <w>20</w>
+      <h>20</h>
     </coordinates>
     <panel_attributes>type=initial
 group=3</panel_attributes>
@@ -52,10 +52,10 @@ group=3</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>81</x>
-      <y>0</y>
-      <w>882</w>
-      <h>873</h>
+      <x>160</x>
+      <y>40</y>
+      <w>980</w>
+      <h>940</h>
     </coordinates>
     <panel_attributes>NodeParser::Root
 --
@@ -67,18 +67,20 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>360</x>
-      <y>666</y>
-      <w>315</w>
-      <h>117</h>
+      <x>470</x>
+      <y>790</y>
+      <w>350</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>BodyWait
 --
-entry/ dataLen = msgInd-&gt;getLen() - sizeof(Msg)
+entry
+/ m_dataLen = m_msgInd-&gt;GetMsgLen() - sizeof(Msg)
+
 DATA_DONE
-/ ^NODE_PARSER_MSG_IND via post(msgInd),
-  msgInd = null,
-  ^^DONE
+/ Send(m_msgInd, m_manager),
+  m_msgInd = null,
+  Raise(DONE)
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -86,17 +88,21 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>360</x>
-      <y>477</y>
-      <w>315</w>
-      <h>117</h>
+      <x>470</x>
+      <y>570</y>
+      <w>350</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>HeaderWait
 --
-entry/ msgInd = new NodeParserMsgInd,
-       dataLen = sizeof(Msg), msgIdx = 0
-DATA_DONE/ if (msgInd-&gt;m_msgBuf valid) ^^NEXT
-           else ^^ERROR_EVT
+entry/ m_msgInd = new NodeParserMsgInd,
+       m_dataLen = sizeof(Msg), 
+       m_msgIdx = 0
+       
+DATA_DONE
+/ if (m_msgInd-&gt;IsMsgLenValid())
+    Raise(NEXT)
+  else Raise(ERROR_EVT)
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -104,10 +110,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>567</x>
-      <y>585</y>
-      <w>27</w>
-      <h>99</h>
+      <x>700</x>
+      <y>700</y>
+      <w>30</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
@@ -115,21 +121,21 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>117</x>
-      <y>288</y>
-      <w>810</w>
-      <h>531</h>
+      <x>200</x>
+      <y>360</y>
+      <w>900</w>
+      <h>590</h>
     </coordinates>
     <panel_attributes>Started
 --
-exit/ gc(msgInd)
+exit/ gc(m_msgInd)
 WIFI_DATA_IND
-/ readLen = MIN((dataLen, dataInFifo used cnt)
-  append readLen bytes from dataInFifo to msgInd-&gt;m_msgBuf
-  dataLen -= readLen
-  if (dataLen == 0) ^^DATA_DONE
-  if (dataInFifo not empty) ^WIFI_DATA_IND
-  else ^WIFI_READ_MORE_REQ     
+/ while (readLen = MIN(m_dataLen, m_dataInFifo-&gt;GetUsedBlockCnt()))
+    append readLen bytes from m_dataInFifo to m_msgInd-&gt;m_msgBuf,
+    m_dataLen -= readLen
+  if (m_dataLen == 0) Raise(DATA_DONE)
+  if (m_dataInFifo not empty) Send(WIFI_DATA_IND) to itself
+  else Send(WIFI_READ_MORE_REQ)     
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -137,10 +143,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>360</x>
-      <y>81</y>
-      <w>378</w>
-      <h>117</h>
+      <x>470</x>
+      <y>130</y>
+      <w>420</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>Stopped
 --
@@ -152,10 +158,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>477</x>
-      <y>45</y>
-      <w>81</w>
-      <h>54</h>
+      <x>600</x>
+      <y>90</y>
+      <w>90</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;
 group=4</panel_attributes>
@@ -164,10 +170,10 @@ group=4</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>468</x>
-      <y>45</y>
-      <w>18</w>
-      <h>18</h>
+      <x>590</x>
+      <y>90</y>
+      <w>20</w>
+      <h>20</h>
     </coordinates>
     <panel_attributes>type=initial
 group=4</panel_attributes>
@@ -176,10 +182,10 @@ group=4</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>441</x>
-      <y>189</y>
-      <w>27</w>
-      <h>117</h>
+      <x>560</x>
+      <y>250</y>
+      <w>30</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
@@ -187,10 +193,10 @@ group=4</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>639</x>
-      <y>189</y>
-      <w>27</w>
-      <h>117</h>
+      <x>780</x>
+      <y>250</y>
+      <w>30</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;110.0;10.0;10.0</additional_attributes>
@@ -198,36 +204,37 @@ group=4</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>315</x>
-      <y>225</y>
-      <w>153</w>
-      <h>45</h>
+      <x>320</x>
+      <y>280</y>
+      <w>270</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>NODE_PARSER_START_REQ
-/ save dataInFifo
+/ m_manager = req.GetFrom()
+  m_dataInFifo = req.GetDataInFifo()
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>648</x>
-      <y>234</y>
-      <w>144</w>
-      <h>36</h>
+      <x>790</x>
+      <y>300</y>
+      <w>160</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>NODE_PARSER_STOP_REQ
-/ clear dataInFifo
+/ clear m_dataInFifo
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>576</x>
-      <y>621</y>
-      <w>72</w>
-      <h>27</h>
+      <x>710</x>
+      <y>740</y>
+      <w>80</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>NEXT
 style=wordwrap</panel_attributes>
@@ -236,14 +243,15 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>567</x>
-      <y>351</y>
-      <w>198</w>
-      <h>72</h>
+      <x>680</x>
+      <y>420</y>
+      <w>280</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>ErrorState
 --
-entry/ ^NODE_PARSER_ERROR_IND 
+entry
+/ Send(NODE_PARSER_ERROR_IND, m_manager) 
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -251,21 +259,21 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>378</y>
-      <w>189</w>
-      <h>27</h>
+      <x>950</x>
+      <y>460</y>
+      <w>170</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>190.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>150.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>810</x>
-      <y>369</y>
-      <w>81</w>
-      <h>27</h>
+      <x>990</x>
+      <y>440</y>
+      <w>90</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>ERROR_EVT
 style=wordwrap</panel_attributes>
@@ -274,10 +282,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>441</x>
-      <y>585</y>
-      <w>27</w>
-      <h>99</h>
+      <x>560</x>
+      <y>700</y>
+      <w>30</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
@@ -285,10 +293,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>414</x>
-      <y>621</y>
-      <w>45</w>
-      <h>27</h>
+      <x>530</x>
+      <y>740</y>
+      <w>50</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>DONE
 style=wordwrap</panel_attributes>
@@ -297,10 +305,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>144</x>
-      <y>108</y>
-      <w>171</w>
-      <h>45</h>
+      <x>230</x>
+      <y>160</y>
+      <w>190</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>NODE_PARSER_START/STOP_REQ
 does not require CFM.
@@ -310,16 +318,67 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>135</x>
-      <y>414</y>
-      <w>189</w>
-      <h>81</h>
+      <x>220</x>
+      <y>490</y>
+      <w>190</w>
+      <h>80</h>
     </coordinates>
-    <panel_attributes>WIFI_READ_MORE_REQ asks Wifi
-to read more data into the 
-dataInFifo. Wifi does not 
-necessarily wait for this 
-REQ to continue to read data.
+    <panel_attributes>@todo WIFI_READ_MORE_REQ
+asks Wifi to read more 
+data into m_dataInFifo. 
+Wifi does not necessarily
+wait for this REQ to
+continue to read data.
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>840</x>
+      <y>600</y>
+      <w>190</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>Msg is the base class of all msgs representing the msg header.
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>840</x>
+      <y>830</y>
+      <w>190</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>m_msgInd is of signal NODE_PARSER_MSG_IND
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>780</x>
+      <y>480</y>
+      <w>80</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>@todo
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>220</x>
+      <y>580</y>
+      <w>190</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Note the use of Raise()
+vs Send() in the handling
+of WIFI_DATA_IND.
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>

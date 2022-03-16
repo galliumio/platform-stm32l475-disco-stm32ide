@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -28,16 +28,16 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>72</x>
-      <y>45</y>
+      <x>117</x>
+      <y>36</y>
       <w>1089</w>
       <h>837</h>
     </coordinates>
     <panel_attributes>Wifi::Root
 --
-WIFI_START_REQ/ ^WIFI_START_CFM(STATE)
-WIFI_CONNECT_REQ/ ^WIFI_CONNECT_CFM(STATE)
-WIFI_DISCONNECT_REQ/ ^WIFI_DISCONNECT_CFM(SUCCESS)
+WIFI_START_REQ/ SendCfm(WIFI_START_CFM(STATE))
+WIFI_CONNECT_REQ/ SendCfm(WIFI_CONNECT_CFM(STATE))
+WIFI_DISCONNECT_REQ/ SendCfm(WIFI_DISCONNECT_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -46,15 +46,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>459</x>
-      <y>108</y>
+      <x>513</x>
+      <y>99</y>
       <w>297</w>
       <h>135</h>
     </coordinates>
     <panel_attributes>Stopped
 --
 WIFI_STOP_REQ 
-/ ^WIFI_STOP_CFM(SUCCESS)
+/ SendCfm(WIFI_STOP_CFM(SUCCESS))
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -62,15 +62,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>126</x>
-      <y>585</y>
+      <x>180</x>
+      <y>576</y>
       <w>990</w>
       <h>261</h>
     </coordinates>
     <panel_attributes>Started
 --
 
-
+symbol=substate
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -78,14 +78,14 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>756</x>
-      <y>306</y>
+      <x>810</x>
+      <y>297</y>
       <w>342</w>
       <h>198</h>
     </coordinates>
     <panel_attributes>Stopping
 --
-entry/ start stateTimer, ^^DONE
+entry/ start stateTimer, Raise(DONE)
 exit/ stop stateTimer, recall
 
 WIFI_STOP_REQ/ defer
@@ -97,14 +97,14 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>126</x>
-      <y>306</y>
+      <x>180</x>
+      <y>297</y>
       <w>342</w>
       <h>198</h>
     </coordinates>
     <panel_attributes>Starting
 --
-entry/ start stateTimer, ^^DONE
+entry/ start stateTimer, Raise(DONE)
 exit/ stop stateTimer
 valign=top
 </panel_attributes>
@@ -113,8 +113,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>270</x>
-      <y>153</y>
+      <x>324</x>
+      <y>144</y>
       <w>207</w>
       <h>171</h>
     </coordinates>
@@ -124,8 +124,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>459</x>
-      <y>396</y>
+      <x>513</x>
+      <y>387</y>
       <w>315</w>
       <h>27</h>
     </coordinates>
@@ -135,8 +135,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>270</x>
-      <y>495</y>
+      <x>324</x>
+      <y>486</y>
       <w>27</w>
       <h>108</h>
     </coordinates>
@@ -146,8 +146,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>513</x>
-      <y>72</y>
+      <x>567</x>
+      <y>63</y>
       <w>90</w>
       <h>54</h>
     </coordinates>
@@ -157,8 +157,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>747</x>
-      <y>153</y>
+      <x>801</x>
+      <y>144</y>
       <w>198</w>
       <h>171</h>
     </coordinates>
@@ -168,8 +168,8 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>783</x>
-      <y>225</y>
+      <x>837</x>
+      <y>216</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -179,8 +179,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>783</x>
-      <y>234</y>
+      <x>837</x>
+      <y>225</y>
       <w>27</w>
       <h>90</h>
     </coordinates>
@@ -190,24 +190,25 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>918</x>
-      <y>495</y>
-      <w>261</w>
+      <x>972</x>
+      <y>486</y>
+      <w>252</w>
       <h>81</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>270.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
+    <additional_attributes>260.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>279</x>
-      <y>216</y>
-      <w>171</w>
+      <x>333</x>
+      <y>207</y>
+      <w>198</w>
       <h>36</h>
     </coordinates>
     <panel_attributes>WIFI_START_REQ
-/ save client, SaveInSeq()
+/ m_client = req.GetFrom(),
+  m_inEvt = req
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -216,20 +217,19 @@ style=wordwrap</panel_attributes>
     <coordinates>
       <x>531</x>
       <y>360</y>
-      <w>171</w>
+      <w>270</w>
       <h>45</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
-/ ^WIFI_START_CFM(error),
-  ClearInSeq() 
+/ SendCfm(WIFI_START_CFM(error), m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>936</x>
-      <y>225</y>
+      <x>990</x>
+      <y>216</y>
       <w>63</w>
       <h>27</h>
     </coordinates>
@@ -240,8 +240,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>666</x>
-      <y>261</y>
+      <x>720</x>
+      <y>252</y>
       <w>144</w>
       <h>27</h>
     </coordinates>
@@ -252,22 +252,21 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>279</x>
-      <y>531</y>
-      <w>207</w>
+      <x>333</x>
+      <y>513</y>
+      <w>279</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>DONE/ ^WIFI_START_CFM(SUCCESS),
-      ClearInSeq()
-   
+    <panel_attributes>DONE
+/ SendCfm(WIFI_START_CFM(SUCCESS), m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>792</x>
-      <y>531</y>
+      <x>846</x>
+      <y>522</y>
       <w>216</w>
       <h>27</h>
     </coordinates>
@@ -278,12 +277,23 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>513</x>
-      <y>72</y>
+      <x>567</x>
+      <y>63</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>288</x>
+      <y>369</y>
+      <w>99</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>Placeholder.</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

@@ -215,13 +215,14 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>480</x>
-      <y>360</y>
+      <x>490</x>
+      <y>350</y>
       <w>290</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
-/ SendCfm(LEVEL_METER_START_CFM(error))
+/ SendCfm(LEVEL_METER_START_CFM(error),
+          m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -253,12 +254,13 @@ style=wordwrap</panel_attributes>
     <id>Text</id>
     <coordinates>
       <x>270</x>
-      <y>540</y>
-      <w>310</w>
-      <h>40</h>
+      <y>530</y>
+      <w>300</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>DONE
-/ SendCfm(LEVEL_METER_START_CFM(SUCCESS))
+/ SendCfm(LEVEL_METER_START_CFM(SUCCESS),
+          m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>

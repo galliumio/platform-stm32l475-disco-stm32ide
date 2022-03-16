@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -35,8 +35,8 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
     </coordinates>
     <panel_attributes>UartOut::Root
 --
-UART_OUT_START_REG/ ^UART_OUT_START_CFM(STATE)
-UART_OUT_WRITE_REG/ ^UART_OUT_WRITE_CFM(STATE)
+UART_OUT_START_REQ/ SendCfm(UART_OUT_START_CFM(STATE))
+UART_OUT_WRITE_REQ/ SendCfm(UART_OUT_WRITE_CFM(STATE))
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -51,6 +51,7 @@ valign=top
     </coordinates>
     <panel_attributes>Started
 --
+DmaCompleteCallback()/ Fw::Post(DMA_DONE) to self
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -58,15 +59,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>530</x>
+      <x>510</x>
       <y>80</y>
-      <w>250</w>
+      <w>320</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>Stopped
 --
-UART_OUT_STOP_REQ/
-^UART_OUT_STOP_CFM(SUCCESS)
+UART_OUT_STOP_REQ
+/ SendCfm(UART_OUT_STOP_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -77,22 +78,22 @@ valign=top
     <coordinates>
       <x>360</x>
       <y>130</y>
-      <w>190</w>
+      <w>170</w>
       <h>180</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>170.0;10.0;10.0;10.0;10.0;160.0</additional_attributes>
+    <additional_attributes>150.0;10.0;10.0;10.0;10.0;160.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>770</x>
+      <x>820</x>
       <y>130</y>
-      <w>190</w>
+      <w>140</w>
       <h>180</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>170.0;160.0;170.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>120.0;160.0;120.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
@@ -100,11 +101,13 @@ valign=top
       <x>370</x>
       <y>200</y>
       <w>320</w>
-      <h>70</h>
+      <h>80</h>
     </coordinates>
-    <panel_attributes>UART_OUT_START_REQ(fifo, uart handle, client)
-/ save fifo, reset fifo, save client
-  ^UART_OUT_START_CFM(SUCCESS)
+    <panel_attributes>UART_OUT_START_REQ
+/ m_manager = req.GetFrom(),
+  save FIFO to m_fifo, m_fifo-&gt;Reset(),
+  save client to m_client,
+  SendCfm(UART_OUT_START_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -131,8 +134,8 @@ style=wordwrap</panel_attributes>
     </coordinates>
     <panel_attributes>Inactive
 --
-UART_OUT_WRITE_REQ[fifo empty]
-/ ^UART_OUT_WRITE_CFM(SUCCESS)
+UART_OUT_WRITE_REQ[m_fifo empty]
+/ SendCfm(UART_OUT_WRITE_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -148,8 +151,8 @@ valign=top
     </coordinates>
     <panel_attributes>Active
 --
-entry/ start activeTimer
-exit/ stop activeTimer
+entry/ start m_activeTimer
+exit/ stop m_activeTimer
 
 valign=top
 </panel_attributes>
@@ -158,9 +161,9 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>740</x>
+      <x>770</x>
       <y>660</y>
-      <w>360</w>
+      <w>330</w>
       <h>220</h>
     </coordinates>
     <panel_attributes>StopWait
@@ -170,8 +173,8 @@ exit/ recall
 UART_OUT_STOP_REQ/ defer
 
 DMA_DONE
-/ increment read fifo index by writeCount
-  ^^DONE
+/ m_fifo-&gt;IncReadIndex(m_writeCount),
+  Raise(DONE)
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -242,22 +245,26 @@ valign=top
     <coordinates>
       <x>200</x>
       <y>660</y>
-      <w>370</w>
+      <w>400</w>
       <h>220</h>
     </coordinates>
     <panel_attributes>Normal
 --
 entry 
-/ HAL_UART_Transmit_DMA(contiguous block),
-  writeCount = contiguous block length
+/ len = max contiguous block len in m_fifo,
+  m_fifo-&gt;CacheOp(CleanCache, len)
+  HAL_UART_Transmit_DMA(m_fifo-&gt;GetReadAddr(), len),
+  m_writeCount = len
   
 UART_OUT_WRITE_REQ
-/ ^UART_OUT_WRITE_CFM(SUCCESS)
+/ SendCfm(UART_OUT_WRITE_CFM(SUCCESS))
 
 DMA_DONE
-/ increment read fifo index by writeCount
-  if (fifo not empty) ^^CONTINUE
-  else ^UART_OUT_EMPTY_IND to client, ^^DONE
+/ m_fifo-&gt;IncReadIndex(m_writeCount)
+  if (m_fifo not empty) Raise(CONTINUE)
+  else
+    SendNotInQ(UART_OUT_EMPTY_IND, m_client),
+    Raise(DONE)
 
 valign=top
 </panel_attributes>
@@ -277,13 +284,13 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>210</x>
+      <x>180</x>
       <y>510</y>
-      <w>250</w>
+      <w>290</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>UART_OUT_WRITE_REQ[fifo not empty]
-/ ^UART_OUT_WRITE_CFM(SUCCESS)
+/ SendCfm(UART_OUT_WRITE_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -303,12 +310,12 @@ style=wordwrap</panel_attributes>
     <coordinates>
       <x>860</x>
       <y>510</y>
-      <w>310</w>
+      <w>350</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>ACTIVE_TIMER, HW_FAIL
-/ ^UART_OUT_FAIL_IND(error, origin, reason)
-  to container
+/ Send(UART_OUT_FAIL_IND(error, origin, reason),
+       m_manager)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -348,9 +355,9 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>90</x>
+      <x>80</x>
       <y>680</y>
-      <w>70</w>
+      <w>80</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>CONTINUE
@@ -360,7 +367,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>560</x>
+      <x>590</x>
       <y>760</y>
       <w>200</w>
       <h>30</h>
@@ -371,7 +378,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>580</x>
+      <x>610</x>
       <y>730</y>
       <w>130</w>
       <h>40</h>

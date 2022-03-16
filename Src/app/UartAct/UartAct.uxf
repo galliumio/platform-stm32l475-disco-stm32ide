@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -28,15 +28,15 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>45</x>
-      <y>126</y>
+      <x>198</x>
+      <y>27</y>
       <w>1089</w>
       <h>819</h>
     </coordinates>
     <panel_attributes>UartAct::Root
 --
 entry/ initialize regions
-UART_ACT_START_REQ/ ^UART_ACT_START_CFM(STATE)
+UART_ACT_START_REQ/ SendCfm(UART_ACT_START_CFM(STATE))
 
 
 valign=top
@@ -46,19 +46,21 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>414</x>
-      <y>207</y>
+      <x>567</x>
+      <y>108</y>
       <w>369</w>
-      <h>117</h>
+      <h>126</h>
     </coordinates>
     <panel_attributes>Stopped
 --
-UART_ACT_STOP_REQ/ ^UART_ACT_STOP_CFM(SUCCESS)
+UART_ACT_STOP_REQ/ SendCfm(UART_ACT_STOP_CFM(SUCCESS))
 UART_ACT_START_REQ
 / InitUart(),
   if (HAL_UART_Init() == OK)
-    SaveInSeq(), save fifo's, save client, ^^START
-  else ^UART_ACT_START_CFM(HAL) 
+    m_inEvt = req, m_client = req.GetFrom(),
+    save FIFOs to m_outFifo and m_inFifo,
+    Raise(START)
+  else SendCfm(UART_ACT_START_CFM(HAL))
 
 valign=top
 </panel_attributes>
@@ -67,8 +69,8 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>108</x>
-      <y>702</y>
+      <x>261</x>
+      <y>603</y>
       <w>972</w>
       <h>198</h>
     </coordinates>
@@ -83,22 +85,22 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>738</x>
-      <y>423</y>
+      <x>891</x>
+      <y>324</y>
       <w>342</w>
       <h>198</h>
     </coordinates>
     <panel_attributes>Stopping
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^UART_IN_STOP_REQ, ^UART_OUT_STOP_REQ,
-       SaveOutSeq()
-exit/ stop stateTimer, recall
+entry/ start m_stateTimer,
+       SendReq(UART_IN_STOP_REQ, m_uartInHsm),
+       SendReq(UART_OUT_STOP_REQ, m_uartOutHsm)
+exit/ stop m_stateTimer, recall
 
 UART_ACT_STOP_REQ / defer
 UART_IN_STOP_CFM, UART_OUT_STOP_CFM
-/ if (!HandleCfmRsp()) ^^FAIL(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raise(FAIL(error))
+  else if (allReceived) Raise(DONE)  
 
 valign=top
 </panel_attributes>
@@ -107,8 +109,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>252</x>
-      <y>252</y>
+      <x>405</x>
+      <y>153</y>
       <w>180</w>
       <h>189</h>
     </coordinates>
@@ -118,8 +120,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>441</x>
-      <y>513</y>
+      <x>594</x>
+      <y>414</y>
       <w>315</w>
       <h>27</h>
     </coordinates>
@@ -129,8 +131,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>252</x>
-      <y>612</y>
+      <x>405</x>
+      <y>513</y>
       <w>27</w>
       <h>108</h>
     </coordinates>
@@ -140,8 +142,8 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>531</x>
-      <y>171</y>
+      <x>684</x>
+      <y>72</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -151,8 +153,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>540</x>
-      <y>171</y>
+      <x>693</x>
+      <y>72</y>
       <w>72</w>
       <h>54</h>
     </coordinates>
@@ -162,8 +164,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>774</x>
-      <y>252</y>
+      <x>927</x>
+      <y>153</y>
       <w>153</w>
       <h>189</h>
     </coordinates>
@@ -173,8 +175,8 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>765</x>
-      <y>351</y>
+      <x>918</x>
+      <y>252</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -184,8 +186,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>765</x>
-      <y>360</y>
+      <x>918</x>
+      <y>261</y>
       <w>27</w>
       <h>81</h>
     </coordinates>
@@ -195,8 +197,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>900</x>
-      <y>612</y>
+      <x>1053</x>
+      <y>513</y>
       <w>252</w>
       <h>81</h>
     </coordinates>
@@ -206,8 +208,8 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>261</x>
-      <y>333</y>
+      <x>414</x>
+      <y>234</y>
       <w>72</w>
       <h>27</h>
     </coordinates>
@@ -218,22 +220,22 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>486</x>
-      <y>477</y>
-      <w>234</w>
+      <x>612</x>
+      <y>378</y>
+      <w>261</w>
       <h>45</h>
     </coordinates>
     <panel_attributes>FAIL, STATE_TIMER
-/ ^UART_ACT_START_CFM(error),
-  ClearInSeq()
+/ SendCfm(UART_ACT_START_CFM(error),
+          m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>909</x>
-      <y>333</y>
+      <x>1062</x>
+      <y>234</y>
       <w>198</w>
       <h>54</h>
     </coordinates>
@@ -246,8 +248,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>639</x>
-      <y>378</y>
+      <x>792</x>
+      <y>279</y>
       <w>144</w>
       <h>27</h>
     </coordinates>
@@ -259,21 +261,21 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>261</x>
-      <y>648</y>
-      <w>234</w>
+      <x>414</x>
+      <y>540</y>
+      <w>279</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>DONE/ ^UART_ACT_START_CFM(SUCCESS),
-      ClearInSeq()
+    <panel_attributes>DONE/ SendCfm(UART_ACT_START_CFM(SUCCESS),
+              m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>747</x>
-      <y>648</y>
+      <x>900</x>
+      <y>549</y>
       <w>189</w>
       <h>45</h>
     </coordinates>
@@ -283,22 +285,22 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>477</x>
-      <y>747</y>
-      <w>279</w>
+      <x>594</x>
+      <y>657</y>
+      <w>315</w>
       <h>45</h>
     </coordinates>
     <panel_attributes>UART_IN_FAIL_IND, UART_OUT_FAIL_IND
-/ ^UART_ACT_FAIL_IND(error, origin, reason)
-  to client
+/ Send(UART_ACT_FAIL_IND(error, origin, reason),
+       m_client)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>171</x>
-      <y>765</y>
+      <x>324</x>
+      <y>666</y>
       <w>261</w>
       <h>81</h>
     </coordinates>
@@ -311,8 +313,8 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>756</x>
-      <y>765</y>
+      <x>936</x>
+      <y>666</y>
       <w>261</w>
       <h>81</h>
     </coordinates>
@@ -324,8 +326,8 @@ valign=top</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>252</x>
-      <y>729</y>
+      <x>405</x>
+      <y>630</y>
       <w>72</w>
       <h>54</h>
     </coordinates>
@@ -335,8 +337,8 @@ valign=top</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>243</x>
-      <y>729</y>
+      <x>396</x>
+      <y>630</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -346,33 +348,34 @@ valign=top</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>423</x>
-      <y>792</y>
-      <w>351</w>
+      <x>576</x>
+      <y>693</y>
+      <w>378</w>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;370.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;400.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>108</x>
-      <y>423</y>
+      <x>261</x>
+      <y>324</y>
       <w>342</w>
       <h>198</h>
     </coordinates>
     <panel_attributes>Starting
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^UART_OUT_START_REQ(outFifo, client), 
-       ^UART_IN_START_REQ(inFifo, client),
-       SaveOutSeq()
-exit/ stop stateTimer
+entry/ start m_stateTimer,
+       SendReq(UART_OUT_START_REQ(m_outFifo, m_client),
+               m_uartOutHsm), 
+       SendReq(UART_IN_START_REQ(m_inFifo, m_client),
+               m_uartInHsm)
+exit/ stop m_stateTimer
 
 UART_OUT_START_CFM, UART_IN_START_CFM
-/ if (!HandleCfmRsp()) ^^FAIL(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raise(FAIL(error))
+  else if (allReceived) Raise(DONE)  
     
 valign=top
 </panel_attributes>

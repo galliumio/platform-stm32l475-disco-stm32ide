@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -24,19 +24,19 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
 
 
 // This text will be stored with each diagram;  use it for notes.</help_text>
-  <zoom_level>12</zoom_level>
+  <zoom_level>10</zoom_level>
   <element>
     <id>UMLState</id>
     <coordinates>
       <x>0</x>
       <y>0</y>
-      <w>1872</w>
-      <h>1560</h>
+      <w>1560</w>
+      <h>1300</h>
     </coordinates>
     <panel_attributes>Console::Root
 --
-entry/ init cmdInput and cmdParser regions
-CONSOLE_START_REQ/ ^CONSOLE_START_CFM(STATE)
+entry/ init m_cmdInput and m_cmdParser regions
+CONSOLE_START_REQ/ SendCfm(CONSOLE_START_CFM(STATE))
 
 
 valign=top
@@ -46,15 +46,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>780</x>
-      <y>84</y>
-      <w>336</w>
-      <h>132</h>
+      <x>650</x>
+      <y>70</y>
+      <w>280</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>Stopped
 --
 CONSOLE_STOP_REQ 
-/ ^CONSOLE_STOP_CFM(SUCCESS)
+/ SendCfm(CONSOLE_STOP_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -63,32 +63,37 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>96</x>
-      <y>720</y>
-      <w>1668</w>
-      <h>792</h>
+      <x>80</x>
+      <y>600</y>
+      <w>1390</w>
+      <h>660</h>
     </coordinates>
     <panel_attributes>Started
 --
-entry/ Log::Addinterface(outIfHsmn, &amp;outFifo),
-       dispatch(CMD_INPUT_START_REQ), Banner(),
-       clear lastCmdFunc, Prompt()
-exit/ Log::RemoveInterface(outIfHsm)
+entry
+/ if (IsUart())
+    writeReqSig = UART_OUT_WRITE_REQ
+    m_outIfHsmn = UartAct::GetUartOutHsmn(m_ifHsmn)
+  Log::AddInterface(m_outIfHsmn, &amp;m_outFifo, writeReqSig, m_isDefault),
+  m_cmdInput.dispatch(CMD_INPUT_START_REQ),
+  Banner(), clear m_lastCmdFunc, Prompt()
+exit/ Log::RemoveInterface(m_outIfHsm)
 
 UART_IN_DATA_IND
-/ while(inFifo.Read(&amp;c))
-    dispatch(CMD_INPUT_CHAR_REQ(c))  
-    if (cmdInput.IsCmdReady())
-      ^^CMD_RECV, break       
-  if (inFifo.GetUsedCount())
-    ^UART_IN_DATA_IND
+/ count = CHAR_LOOP_COUNT
+  while(count-- &amp;&amp; m_inFifo.Read(&amp;c, 1))
+    m_cmdInput.dispatch(CMD_INPUT_CHAR_REQ(c))  
+    if (m_cmdInput.IsCmdReady())
+      Raise(CMD_RECV), break       
+  if (m_inFifo.GetUsedCount())
+    Send(UART_IN_DATA_IND, self)
 
-Any interface events
+CONSOLE_TIMER, &lt;Any interface events&gt;
 [(sig != CONSOLE_START_REQ) &amp;&amp; (sig != CONSOLE_STOP_REQ) &amp;&amp;
  (sig != UART_IN_DATA_IND)]
-/ if (lastCmdFunc)
-    if (lastCmdFunc(e) == CMD_DONE)
-      clear lastCmdFunc, consoleTimer.Stop(), Prompt()
+/ if (m_lastCmdFunc)
+    if (m_lastCmdFunc(e) == CMD_DONE)
+      clear m_lastCmdFunc, stop m_consoleTimer, Prompt()
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -96,22 +101,22 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1140</x>
-      <y>348</y>
-      <w>456</w>
-      <h>264</h>
+      <x>950</x>
+      <y>290</y>
+      <w>380</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>Stopping
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^UART_ACT_STOP_REQ, SaveOutSeq()
-exit/ stop stateTimer, recall
+entry/ start m_stateTimer,
+       SendCfm(UART_ACT_STOP_REQ, m_ifHsmn)
+exit/ stop m_stateTimer, recall
 
 CONSOLE_STOP_REQ/ defer
 
 UART_ACT_STOP_CFM
-/ if (!HandleCfmRsp()) ^^FAILED(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raise(FAILED(error))
+  else if (allReceived) Raise(DONE)
     
 valign=top
 </panel_attributes>
@@ -120,20 +125,21 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>300</x>
-      <y>348</y>
-      <w>456</w>
-      <h>264</h>
+      <x>220</x>
+      <y>290</y>
+      <w>410</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>Starting
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^UART_ACT_START_REQ, SaveOutSeq()
-exit/ stop stateTimer
+entry/ start m_stateTimer,
+       SendReq(UART_ACT_START_REQ(m_outFifo, m_inFifo),
+               m_ifHsmn), 
+exit/ stop m_stateTimer
 
 UART_ACT_START_CFM
-/ if (!HandleCfmRsp()) ^^FAILED(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raised(FAILED(error))
+  else if (allReceived) Raise(DONE)
    
 valign=top
 </panel_attributes>
@@ -142,10 +148,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>492</x>
-      <y>144</y>
-      <w>312</w>
-      <h>228</h>
+      <x>410</x>
+      <y>120</y>
+      <w>260</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>240.0;10.0;10.0;10.0;10.0;170.0</additional_attributes>
@@ -153,10 +159,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>744</x>
-      <y>468</y>
-      <w>420</w>
-      <h>36</h>
+      <x>620</x>
+      <y>390</y>
+      <w>350</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;330.0;10.0</additional_attributes>
@@ -164,21 +170,21 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>492</x>
-      <y>600</y>
-      <w>36</w>
-      <h>144</h>
+      <x>410</x>
+      <y>470</y>
+      <w>30</w>
+      <h>150</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>816</x>
-      <y>36</y>
-      <w>156</w>
-      <h>72</h>
+      <x>680</x>
+      <y>30</y>
+      <w>130</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;110.0;10.0;110.0;40.0</additional_attributes>
@@ -186,10 +192,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1104</x>
-      <y>144</y>
-      <w>288</w>
-      <h>228</h>
+      <x>920</x>
+      <y>120</y>
+      <w>240</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>220.0;170.0;220.0;10.0;10.0;10.0</additional_attributes>
@@ -197,10 +203,10 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>1176</x>
-      <y>240</y>
-      <w>24</w>
-      <h>24</h>
+      <x>980</x>
+      <y>200</y>
+      <w>20</w>
+      <h>20</h>
     </coordinates>
     <panel_attributes>type=final</panel_attributes>
     <additional_attributes/>
@@ -208,10 +214,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1176</x>
-      <y>252</y>
-      <w>36</w>
-      <h>120</h>
+      <x>980</x>
+      <y>210</y>
+      <w>30</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
@@ -219,50 +225,51 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1356</x>
-      <y>600</y>
-      <w>540</w>
-      <h>108</h>
+      <x>1130</x>
+      <y>470</y>
+      <w>450</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>430.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
+    <additional_attributes>430.0;80.0;10.0;80.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>504</x>
-      <y>228</y>
-      <w>264</w>
-      <h>72</h>
+      <x>420</x>
+      <y>190</y>
+      <w>270</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>CONSOLE_START_REQ
-/ save interface active object,
-  save rootCmdFunc,
-  SaveInSeq()
+/ m_ifHsmn = req.GetIfHsmn();
+  m_isDefault = req.IsDefault(),
+  m_rootCmdFunc = req.GetCmdFunc(),
+  m_inEvt = req
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>804</x>
-      <y>420</y>
-      <w>312</w>
-      <h>60</h>
+      <x>660</x>
+      <y>350</y>
+      <w>270</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
-/ ^CONSOLE_START_CFM(error),
-  ClearInSeq()
+/ SendCfm(CONSOLE_START_CFM(error),
+          m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1368</x>
-      <y>228</y>
-      <w>300</w>
-      <h>36</h>
+      <x>1140</x>
+      <y>190</y>
+      <w>250</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>DONE
 style=wordwrap</panel_attributes>
@@ -271,10 +278,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1020</x>
-      <y>288</y>
-      <w>192</w>
-      <h>36</h>
+      <x>850</x>
+      <y>240</y>
+      <w>160</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
 style=wordwrap</panel_attributes>
@@ -283,10 +290,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>840</x>
-      <y>1224</y>
-      <w>204</w>
-      <h>36</h>
+      <x>700</x>
+      <y>1020</y>
+      <w>170</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>CONSOLE_RAW_ENABLE_REQ
 style=wordwrap</panel_attributes>
@@ -295,10 +302,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1116</x>
-      <y>648</y>
-      <w>288</w>
-      <h>36</h>
+      <x>960</x>
+      <y>520</y>
+      <w>240</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>CONSOLE_STOP_REQ/ defer
 style=wordwrap</panel_attributes>
@@ -307,10 +314,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>816</x>
-      <y>36</y>
-      <w>24</w>
-      <h>24</h>
+      <x>680</x>
+      <y>30</y>
+      <w>20</w>
+      <h>20</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -318,10 +325,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>720</x>
-      <y>828</y>
-      <w>456</w>
-      <h>108</h>
+      <x>600</x>
+      <y>750</y>
+      <w>380</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>Login
 --
@@ -333,18 +340,18 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>156</x>
-      <y>1152</y>
-      <w>600</w>
-      <h>300</h>
+      <x>130</x>
+      <y>990</y>
+      <w>510</w>
+      <h>220</h>
     </coordinates>
     <panel_attributes>Interactive
 --
 CMD_RECV
-/ cmdStr = cmdInput.GetCmd(),
-  dispatch(CMD_PARSER_START_REQ(cmdStr)),
-  if (rootCmdFunc(CONSOLE_CMD_IND(argv, argc)) == CMD_DONE)
-    clear lastCmdFunc, consoleTimer.Stop(), Prompt()
+/ copy m_cmdInput.GetCmd() to m_cmdStr,
+  m_cmdParser.dispatch(CMD_PARSER_START_REQ(m_cmdStr, m_argv, &amp;m_argc)),
+  if (m_rootCmdFunc(CONSOLE_CMD(argv, argc)) == CMD_DONE)
+    clear m_lastCmdFunc, stop m_consoleTimer, Prompt()
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -352,19 +359,19 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1128</x>
-      <y>1152</y>
-      <w>576</w>
-      <h>300</h>
+      <x>940</x>
+      <y>990</y>
+      <w>480</w>
+      <h>220</h>
     </coordinates>
     <panel_attributes>Raw
 --
 UART_IN_DATA_IND
-/ if (lastCmdFunc)
-    if (lastCmdFunc(e) == CMD_DONE)
-      clear lastCmdFunc, Prompt()
-  if (!lastCmdFunc)
-    ^^RAW_DISABLE
+/ if (m_lastCmdFunc)
+    if (m_lastCmdFunc(e) == CMD_DONE)
+      clear m_lastCmdFunc, stop m_consoleTimer, Prompt()
+  if (!m_lastCmdFunc)
+    Raise(RAW_DISABLE)
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -372,10 +379,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>396</x>
-      <y>1092</y>
-      <w>108</w>
-      <h>84</h>
+      <x>330</x>
+      <y>940</y>
+      <w>90</w>
+      <h>70</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;70.0;10.0;70.0;50.0</additional_attributes>
@@ -383,10 +390,10 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>384</x>
-      <y>1092</y>
-      <w>24</w>
-      <h>24</h>
+      <x>330</x>
+      <y>940</y>
+      <w>20</w>
+      <h>20</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -394,48 +401,60 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>744</x>
-      <y>1248</y>
-      <w>408</w>
-      <h>36</h>
+      <x>630</x>
+      <y>1040</y>
+      <w>330</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;320.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;310.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>516</x>
-      <y>648</y>
-      <w>324</w>
-      <h>48</h>
+      <x>430</x>
+      <y>520</y>
+      <w>280</w>
+      <h>50</h>
     </coordinates>
-    <panel_attributes>DONE/ ^CONSOLE_START_CFM(SUCCESS),
-      ClearInSeq()
+    <panel_attributes>DONE
+/ SendCfm(CONSOLE_START_CFM(SUCCESS),
+          m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>744</x>
-      <y>1344</y>
-      <w>408</w>
-      <h>36</h>
+      <x>630</x>
+      <y>1120</y>
+      <w>330</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>320.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>310.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>876</x>
-      <y>1320</y>
-      <w>108</w>
-      <h>36</h>
+      <x>730</x>
+      <y>1100</y>
+      <w>120</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>RAW_DISABLE
 style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>720</x>
+      <y>800</y>
+      <w>140</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>@todo - TBD</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

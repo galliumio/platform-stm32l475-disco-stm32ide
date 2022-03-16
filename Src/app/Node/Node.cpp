@@ -465,18 +465,18 @@ QState Node::AuthWait(Node * const me, QEvt const * const e) {
         case NODE_PARSER_MSG_IND: {
             EVENT(e);
             NodeParserMsgInd const &ind = static_cast<NodeParserMsgInd const &>(*e);
-            auto m = me->CHECK_MSG(SrvAuthCfmMsg, ind);
-            if (m && m->MatchSeq(me->m_authSeq)) {
-                if (m->IsSuccess()) {
-                    STRBUF_COPY(me->m_nodeId, m->GetNodeId());
-                    LOG("assigned nodeId = '%s'", me->m_nodeId);
-                    me->Raise(new Evt(DONE));
-                } else {
-                    me->Raise(new Failed(ERROR_AUTH, me->GetHsmn()));
+            if (auto m = me->CHECK_MSG(SrvAuthCfmMsg, ind)) {
+                if (m->MatchSeq(me->m_authSeq)) {
+                    if (m->IsSuccess()) {
+                        STRBUF_COPY(me->m_nodeId, m->GetNodeId());
+                        LOG("assigned nodeId = '%s'", me->m_nodeId);
+                        me->Raise(new Evt(DONE));
+                    } else {
+                        me->Raise(new Failed(ERROR_AUTH, me->GetHsmn()));
+                    }
                 }
                 return Q_HANDLED();
             }
-            // Ignore if msg type or seq not matching.
             break;
         }
     }
@@ -563,9 +563,10 @@ QState Node::Normal(Node * const me, QEvt const * const e) {
         case NODE_PARSER_MSG_IND: {
             EVENT(e);
             NodeParserMsgInd const &ind = static_cast<NodeParserMsgInd const &>(*e);
-            auto m = me->CHECK_MSG(SrvPingCfmMsg, ind);
-            if (m && m->MatchSeq(me->m_pingSeq) && m->IsSuccess()) {
-                me->m_pingCfmTimer.Stop();
+            if (auto m = me->CHECK_MSG(SrvPingCfmMsg, ind)) {
+                if (m->MatchSeq(me->m_pingSeq) && m->IsSuccess()) {
+                    me->m_pingCfmTimer.Stop();
+                }
                 return Q_HANDLED();
             }
             // Handles messages destined to other HSMs.
@@ -612,17 +613,18 @@ QState Node::RecoveryWait(Node * const me, QEvt const * const e) {
         case NODE_PARSER_MSG_IND: {
             EVENT(e);
             NodeParserMsgInd const &ind = static_cast<NodeParserMsgInd const &>(*e);
-            auto m = me->CHECK_MSG(SrvPingCfmMsg, ind);
-            if (m && m->MatchSeq(me->m_pingSeq) && m->IsSuccess()) {
-                uint32_t rspTime = GetSystemMs() - me->m_pingTime;
-                LOG("ping rsp time = %dms", rspTime);
-                if (rspTime < RECOVER_PING_CFM_THRES_MS) {
-                    me->Raise(new Evt(RECOVERED));
-                } else {
-                    me->m_pingTime = GetSystemMs();
-                    me->m_pingSeq = GEN_SEQ();
-                    SrvPingReqMsg msg;
-                    me->SendMsg(msg, sizeof(msg), me->m_srvId, me->m_pingSeq);
+            if (auto m = me->CHECK_MSG(SrvPingCfmMsg, ind)) {
+                if (m->MatchSeq(me->m_pingSeq) && m->IsSuccess()) {
+                    uint32_t rspTime = GetSystemMs() - me->m_pingTime;
+                    LOG("ping rsp time = %dms", rspTime);
+                    if (rspTime < RECOVER_PING_CFM_THRES_MS) {
+                        me->Raise(new Evt(RECOVERED));
+                    } else {
+                        me->m_pingTime = GetSystemMs();
+                        me->m_pingSeq = GEN_SEQ();
+                        SrvPingReqMsg msg;
+                        me->SendMsg(msg, sizeof(msg), me->m_srvId, me->m_pingSeq);
+                    }
                 }
                 return Q_HANDLED();
             }
