@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2.0">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -28,14 +28,14 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>50</x>
-      <y>40</y>
-      <w>1120</w>
+      <x>20</x>
+      <y>0</y>
+      <w>1180</w>
       <h>870</h>
     </coordinates>
     <panel_attributes>SimpleReg::Root
 --
-SIMPLE_REG_START_REG/ SIMPLE_REG_START_CFM(STATE)
+SIMPLE_REG_START_REQ/ SendCfm(SIMPLE_REG_START_CFM(STATE))
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -44,7 +44,7 @@ valign=top
     <id>UMLState</id>
     <coordinates>
       <x>160</x>
-      <y>350</y>
+      <y>310</y>
       <w>900</w>
       <h>460</h>
     </coordinates>
@@ -59,15 +59,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>500</x>
-      <y>160</y>
-      <w>250</w>
+      <x>430</x>
+      <y>110</y>
+      <w>340</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>Stopped
 --
-SIMPLE_REG_STOP_REQ/
-SIMPLE_REG_STOP_CFM(SUCCESS)
+SIMPLE_REG_STOP_REQ
+/ SendCfm(SIMPLE_REG_STOP_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -76,35 +76,35 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>320</x>
-      <y>210</y>
-      <w>200</w>
-      <h>160</h>
+      <x>260</x>
+      <y>160</y>
+      <w>190</w>
+      <h>170</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>180.0;10.0;10.0;10.0;10.0;140.0</additional_attributes>
+    <additional_attributes>170.0;10.0;10.0;10.0;10.0;150.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>740</x>
-      <y>210</y>
-      <w>180</w>
-      <h>160</h>
+      <x>760</x>
+      <y>160</y>
+      <w>160</w>
+      <h>170</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>160.0;140.0;160.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>140.0;150.0;140.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>330</x>
-      <y>260</y>
-      <w>210</w>
+      <x>270</x>
+      <y>230</y>
+      <w>300</w>
       <h>50</h>
     </coordinates>
-    <panel_attributes>SIMPLE_REG_START_REQ/
-SIMPLE_REG_START_CFM(SUCCESS)
+    <panel_attributes>SIMPLE_REG_START_REQ
+/ SendCfm(SIMPLE_REG_START_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -112,12 +112,12 @@ style=wordwrap</panel_attributes>
     <id>Text</id>
     <coordinates>
       <x>900</x>
-      <y>260</y>
-      <w>210</w>
+      <y>220</y>
+      <w>300</w>
       <h>50</h>
     </coordinates>
-    <panel_attributes>SIMPLE_REG_STOP_REQ/
-SIMPLE_REG_STOP_CFM(SUCCESS)
+    <panel_attributes>SIMPLE_REG_STOP_REQ
+/ SendCfm(SIMPLE_REG_STOP_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>

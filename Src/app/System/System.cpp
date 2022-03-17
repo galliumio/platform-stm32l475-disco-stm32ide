@@ -125,7 +125,6 @@ QState System::Root(System * const me, QEvt const * const e) {
             me->SendCfm(new SystemStartCfm(ERROR_STATE, me->GetHsmn()), req);
             return Q_HANDLED();
         }
-        // Test only.
         case SYSTEM_RESTART_REQ:
         case SYSTEM_STOP_REQ: {
             EVENT(e);
@@ -152,7 +151,6 @@ QState System::Stopped(System * const me, QEvt const * const e) {
             me->SendCfm(new SystemStopCfm(ERROR_SUCCESS), req);
             return Q_HANDLED();
         }
-        // Test only.
         case SYSTEM_RESTART_REQ:
         case SYSTEM_START_REQ: {
             EVENT(e);
@@ -352,7 +350,6 @@ QState System::Stopping(System * const me, QEvt const * const e) {
         case Q_INIT_SIG: {
             return Q_TRAN(&System::Stopping1);
         }
-        // Test only.
         case SYSTEM_RESTART_REQ:
         case SYSTEM_STOP_REQ: {
             EVENT(e);

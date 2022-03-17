@@ -243,9 +243,9 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>680</x>
+      <x>670</x>
       <y>420</y>
-      <w>280</w>
+      <w>300</w>
       <h>100</h>
     </coordinates>
     <panel_attributes>ErrorState
@@ -259,18 +259,18 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>950</x>
+      <x>960</x>
       <y>460</y>
-      <w>170</w>
+      <w>160</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>150.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>140.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>990</x>
+      <x>1000</x>
       <y>440</y>
       <w>90</w>
       <h>30</h>

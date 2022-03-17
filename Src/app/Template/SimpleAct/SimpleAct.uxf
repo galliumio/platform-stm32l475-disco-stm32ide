@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.3.0">
   <help_text>// Uncomment the following line to change the fontsize and font:
 fontsize=11
 fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
@@ -35,7 +35,7 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
     </coordinates>
     <panel_attributes>SimpleAct::Root
 --
-SIMPLE_ACT_START_REQ/ ^SIMPLE_ACT_START_CFM(STATE)
+SIMPLE_ACT_START_REQ/ SendCfm(SIMPLE_ACT_START_CFM(STATE))
 
 
 valign=top
@@ -45,15 +45,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>460</x>
+      <x>430</x>
       <y>70</y>
-      <w>280</w>
+      <w>330</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>Stopped
 --
 SIMPLE_ACT_STOP_REQ 
-/ ^SIMPLE_ACT_STOP_CFM(SUCCESS)
+/ SendCfm(SIMPLE_ACT_STOP_CFM(SUCCESS))
 
 valign=top
 </panel_attributes>
@@ -85,15 +85,15 @@ valign=top
     </coordinates>
     <panel_attributes>Stopping
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^XXX_STOP_REQ, SaveOutSeq()
-exit/ stop stateTimer, recall
+entry/ start m_stateTimer,
+       SendReq(XXX_STOP_REQ)
+exit/ stop m_stateTimer, recall
 
 SIMPLE_ACT_STOP_REQ/ defer
 
 XXX_STOP_CFM
-/ if (!HandleCfmRsp()) ^^FAILED(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raise(FAILED(error))
+  else if (allReceived) Raise(DONE)
     
 valign=top
 </panel_attributes>
@@ -109,13 +109,13 @@ valign=top
     </coordinates>
     <panel_attributes>Starting
 --
-entry/ start stateTimer, ResetOutSeq(),
-       ^XXX_START_REQ, SaveOutSeq()
-exit/ stop stateTimer
+entry/ start m_stateTimer,
+       SendReq(XXX_START_REQ)
+exit/ stop m_stateTimer
 
 XXX_START_CFM
-/ if (!HandleCfmRsp()) ^^FAILED(error)
-  else if (allReceived) ^^DONE
+/ if (!CheckCfm()) Raise(FAILED(error))
+  else if (allReceived) Raise(DONE)
    
 valign=top
 </panel_attributes>
@@ -126,11 +126,11 @@ valign=top
     <coordinates>
       <x>220</x>
       <y>120</y>
-      <w>260</w>
+      <w>230</w>
       <h>190</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>240.0;10.0;10.0;10.0;10.0;170.0</additional_attributes>
+    <additional_attributes>210.0;10.0;10.0;10.0;10.0;170.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -157,24 +157,24 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>490</x>
+      <x>530</x>
       <y>30</y>
-      <w>130</w>
+      <w>90</w>
       <h>60</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;110.0;10.0;110.0;40.0</additional_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0;70.0;40.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>730</x>
+      <x>750</x>
       <y>120</y>
-      <w>240</w>
+      <w>220</w>
       <h>190</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>220.0;170.0;220.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>200.0;170.0;200.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLSpecialState</id>
@@ -214,24 +214,25 @@ valign=top
     <coordinates>
       <x>230</x>
       <y>190</y>
-      <w>250</w>
-      <h>50</h>
+      <w>170</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>SIMPLE_ACT_START_REQ/ SaveInSeq()
+    <panel_attributes>SIMPLE_ACT_START_REQ
+/ m_inEvt = req
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>480</x>
+      <x>450</x>
       <y>350</y>
-      <w>260</w>
+      <w>290</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>FAILED, STATE_TIMER
-/ ^SIMPLE_ACT_START_CFM(error),
-  ClearInSeq()
+/ SendCfm(SIMPLE_ACT_START_CFM(error),
+          m_inEvt) 
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -263,12 +264,13 @@ style=wordwrap</panel_attributes>
     <id>Text</id>
     <coordinates>
       <x>230</x>
-      <y>540</y>
-      <w>270</w>
-      <h>40</h>
+      <y>530</y>
+      <w>300</w>
+      <h>50</h>
     </coordinates>
-    <panel_attributes>DONE/ ^SIMPLE_ACT_START_CFM(SUCCESS),
-      ClearInSeq()
+    <panel_attributes>DONE
+/ SendCfmn(SIMPLE_ACT_START_CFM(SUCCESS),
+           m_inEvt)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
@@ -287,7 +289,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>490</x>
+      <x>530</x>
       <y>30</y>
       <w>20</w>
       <h>20</h>
