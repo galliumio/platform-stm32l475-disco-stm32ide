@@ -275,7 +275,7 @@ QState UartIn::Normal(UartIn * const me, QEvt const * const e) {
         case DMA_RECV: {
             EVENT(e);
             // Sample DMA remaining count first. It may keep decrementing as data are being received.
-            // Those that arrrive after this point will be processed on the next DMA_RECV event.
+            // Those that arrive after this point will be processed on the next DMA_RECV event.
             // The FIFO write index is only updated in this region, so there is no need to enforce
             // critical section.
             uint32_t dmaRemainCount = __HAL_DMA_GET_COUNTER(me->m_hal.hdmarx);

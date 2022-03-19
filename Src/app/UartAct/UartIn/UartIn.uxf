@@ -24,14 +24,14 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
 
 
 // This text will be stored with each diagram;  use it for notes.</help_text>
-  <zoom_level>8</zoom_level>
+  <zoom_level>19</zoom_level>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>96</x>
+      <x>0</x>
       <y>0</y>
-      <w>976</w>
-      <h>808</h>
+      <w>2318</w>
+      <h>1919</h>
     </coordinates>
     <panel_attributes>UartIn::Root
 --
@@ -43,10 +43,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>168</x>
-      <y>248</y>
-      <w>848</w>
-      <h>520</h>
+      <x>171</x>
+      <y>589</y>
+      <w>2014</w>
+      <h>1235</h>
     </coordinates>
     <panel_attributes>Started
 --
@@ -61,10 +61,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>472</x>
-      <y>88</y>
-      <w>216</w>
-      <h>88</h>
+      <x>893</x>
+      <y>209</y>
+      <w>513</w>
+      <h>209</h>
     </coordinates>
     <panel_attributes>Stopped
 --
@@ -78,10 +78,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>264</x>
-      <y>128</y>
-      <w>224</w>
-      <h>136</h>
+      <x>399</x>
+      <y>304</y>
+      <w>532</w>
+      <h>323</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>260.0;10.0;10.0;10.0;10.0;150.0</additional_attributes>
@@ -89,10 +89,10 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>864</x>
-      <y>176</y>
-      <w>168</w>
-      <h>40</h>
+      <x>1824</x>
+      <y>418</y>
+      <w>399</w>
+      <h>95</h>
     </coordinates>
     <panel_attributes>UART_IN_STOP_REQ
 / ^UART_IN_STOP_CFM(SUCCESS)
@@ -102,10 +102,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>536</x>
-      <y>56</y>
-      <w>16</w>
-      <h>16</h>
+      <x>1045</x>
+      <y>133</y>
+      <w>38</w>
+      <h>38</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -113,10 +113,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
-      <y>56</y>
-      <w>64</w>
-      <h>48</h>
+      <x>1026</x>
+      <y>133</y>
+      <w>152</w>
+      <h>114</h>
     </coordinates>
     <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0</additional_attributes>
@@ -124,10 +124,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>224</x>
-      <y>400</y>
-      <w>752</w>
-      <h>328</h>
+      <x>304</x>
+      <y>950</y>
+      <w>1786</w>
+      <h>779</h>
     </coordinates>
     <panel_attributes>Normal
 --
@@ -150,10 +150,10 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>272</x>
-      <y>168</y>
-      <w>232</w>
-      <h>56</h>
+      <x>418</x>
+      <y>399</y>
+      <w>551</w>
+      <h>133</h>
     </coordinates>
     <panel_attributes>UART_IN_START_REQ
 / m_manager = req.GetFrom(),
@@ -166,10 +166,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>704</x>
-      <y>584</y>
-      <w>240</w>
-      <h>88</h>
+      <x>1444</x>
+      <y>1387</y>
+      <w>570</w>
+      <h>209</h>
     </coordinates>
     <panel_attributes>Active
 --
@@ -185,10 +185,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>752</x>
-      <y>288</y>
-      <w>200</w>
-      <h>64</h>
+      <x>1558</x>
+      <y>684</y>
+      <w>475</w>
+      <h>152</h>
     </coordinates>
     <panel_attributes>Failed
 --
@@ -201,10 +201,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>288</x>
-      <y>584</y>
-      <w>232</w>
-      <h>88</h>
+      <x>456</x>
+      <y>1387</y>
+      <w>551</w>
+      <h>209</h>
     </coordinates>
     <panel_attributes>Inactive
 --
@@ -217,10 +217,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
-      <y>128</y>
-      <w>200</w>
-      <h>136</h>
+      <x>1387</x>
+      <y>304</y>
+      <w>475</w>
+      <h>323</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>230.0;150.0;230.0;10.0;10.0;10.0</additional_attributes>
@@ -228,10 +228,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>328</x>
-      <y>360</y>
-      <w>80</w>
-      <h>56</h>
+      <x>551</x>
+      <y>855</y>
+      <w>190</w>
+      <h>133</h>
     </coordinates>
     <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;80.0;10.0;80.0;50.0</additional_attributes>
@@ -239,10 +239,10 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>320</x>
-      <y>360</y>
-      <w>16</w>
-      <h>16</h>
+      <x>532</x>
+      <y>855</y>
+      <w>38</w>
+      <h>38</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -250,10 +250,10 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>360</x>
-      <y>552</y>
-      <w>16</w>
-      <h>16</h>
+      <x>627</x>
+      <y>1311</y>
+      <w>38</w>
+      <h>38</h>
     </coordinates>
     <panel_attributes>type=initial</panel_attributes>
     <additional_attributes/>
@@ -261,10 +261,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>368</x>
-      <y>552</y>
-      <w>64</w>
-      <h>48</h>
+      <x>646</x>
+      <y>1311</y>
+      <w>152</w>
+      <h>114</h>
     </coordinates>
     <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0</additional_attributes>
@@ -272,10 +272,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>512</x>
-      <y>608</y>
-      <w>208</w>
-      <h>24</h>
+      <x>988</x>
+      <y>1444</y>
+      <w>494</w>
+      <h>57</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;10.0;240.0;10.0</additional_attributes>
@@ -283,10 +283,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>512</x>
-      <y>640</y>
-      <w>208</w>
-      <h>24</h>
+      <x>988</x>
+      <y>1520</y>
+      <w>494</w>
+      <h>57</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>240.0;10.0;10.0;10.0</additional_attributes>
@@ -294,10 +294,10 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>848</x>
-      <y>344</y>
-      <w>24</w>
-      <h>72</h>
+      <x>1786</x>
+      <y>817</y>
+      <w>57</w>
+      <h>171</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
@@ -305,10 +305,10 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>864</x>
-      <y>360</y>
-      <w>120</w>
-      <h>32</h>
+      <x>1824</x>
+      <y>855</y>
+      <w>285</w>
+      <h>76</h>
     </coordinates>
     <panel_attributes>OVERFLOW, HW_FAIL
 / ^UARTRX_FAIL_IND
@@ -318,10 +318,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>576</x>
-      <y>592</y>
-      <w>72</w>
-      <h>24</h>
+      <x>1140</x>
+      <y>1406</y>
+      <w>171</w>
+      <h>57</h>
     </coordinates>
     <panel_attributes>DATA_RDY
 style=wordwrap</panel_attributes>
@@ -330,10 +330,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>768</x>
-      <y>552</y>
-      <w>88</w>
-      <h>48</h>
+      <x>1596</x>
+      <y>1311</y>
+      <w>209</w>
+      <h>114</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;40.0;10.0;10.0;90.0;10.0;90.0;40.0</additional_attributes>
@@ -341,24 +341,24 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>744</x>
-      <y>536</y>
-      <w>136</w>
-      <h>24</h>
+      <x>1539</x>
+      <y>1273</y>
+      <w>361</w>
+      <h>57</h>
     </coordinates>
-    <panel_attributes>ACTIVE_TIMER[dataRecv]
+    <panel_attributes>ACTIVE_TIMER[m_dataRecv]
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>544</x>
-      <y>624</y>
-      <w>152</w>
-      <h>24</h>
+      <x>1045</x>
+      <y>1482</y>
+      <w>380</w>
+      <h>57</h>
     </coordinates>
-    <panel_attributes>ACTIVE_TIMER[!dataRecv]
+    <panel_attributes>ACTIVE_TIMER[!m_dataRecv]
 / Raise(DMA_RECV)
 style=wordwrap</panel_attributes>
     <additional_attributes/>
@@ -366,10 +366,10 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>464</x>
-      <y>288</y>
-      <w>200</w>
-      <h>72</h>
+      <x>874</x>
+      <y>684</y>
+      <w>475</w>
+      <h>171</h>
     </coordinates>
     <panel_attributes>RxCallBack() is called from
 UART ISR in Src/stm32l4xx_it.cpp
