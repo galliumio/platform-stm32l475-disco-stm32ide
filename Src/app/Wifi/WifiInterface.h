@@ -103,7 +103,7 @@ public:
 class WifiStopReq : public Evt {
 public:
     enum {
-        TIMEOUT_MS = 10000      // @todo Align with ES_WIFI_TIMEOUT in es_wifi_conf.h which is currenty set to 65s.
+        TIMEOUT_MS = 31000      // Aligned with ES_WIFI_TIMEOUT in es_wifi_conf.h which is currently set to 30s.
     };
     WifiStopReq() :
         Evt(WIFI_STOP_REQ) {}
@@ -190,7 +190,7 @@ public:
 class WifiDisconnectReq : public Evt {
 public:
     enum {
-        TIMEOUT_MS = 5000
+        TIMEOUT_MS = 31000      // Aligned with ES_WIFI_TIMEOUT in es_wifi_conf.h which is currently set to 30s.
     };
     WifiDisconnectReq() :
         Evt(WIFI_DISCONNECT_REQ) {}

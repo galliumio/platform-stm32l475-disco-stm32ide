@@ -640,7 +640,12 @@ QState Wifi::Joining(Wifi * const me, QEvt const * const e) {
                     if (ES_WIFI_Connect(&me->m_esWifiObj, wifiSsid , wifiPwd, ES_WIFI_SEC_WPA2) == ES_WIFI_STATUS_OK)
                     {
                         LOG("WIFI joined");
-                        me->Raise(new Evt(DONE));
+                        // It does not use "raise()" to allow WIFI_STOP_REQ or WIFI_DISCONNECT_REQ to be processed first.
+                        // Otherwise the two synchronous calls ES_WIFI_Connect() and ES_WIFI_StartClientConnection() will be
+                        // called back to back without any events to be processed in between.
+                        // The worst case is when it takes a long time to join an access point but the server is down which
+                        // causes ES_WIFI_StartClientConnection() to return after a long time.
+                        me->Send(new Evt(DONE), me->GetHsmn());
                     } else {
                         ERROR("ES_WIFI_Connect failed");
                         me->Raise(new Failed(ERROR_NETWORK, HSM_UNDEF, 0));
@@ -739,11 +744,16 @@ QState Wifi::Disconnecting(Wifi * const me, QEvt const * const e) {
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
+            // The following call is commented as it doesn't work when Disconnecting is entered because
+            // of a previous timeout error in ConnectWait state. It is not needed anyway since upon DONE
+            // it will enter Idle state which will reset the WiFi module. It is retained as a placeholder.
+            /*
             ES_WIFI_Conn_t conn;
             memset(&conn, 0, sizeof(conn));
             conn.Number = SOCKET_NUM;
             ES_WIFI_Status_t status = ES_WIFI_StopClientConnection(&me->m_esWifiObj, &conn);
             FW_ASSERT(status == ES_WIFI_STATUS_OK);
+            */
             me->m_stateTimer.Start(DISCONNECTING_TIMEOUT_MS);
             me->Raise(new Evt(DONE));
             return Q_HANDLED();
@@ -770,8 +780,13 @@ QState Wifi::Unjoining(Wifi * const me, QEvt const * const e) {
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
+            // The following call is commented as it doesn't work when Disconnecting is entered because
+            // of a previous timeout error in ConnectWait state. It is not needed anyway since upon DONE
+            // it will enter Idle state which will reset the WiFi module. It is retained as a placeholder.
+            /*
             ES_WIFI_Status_t status = ES_WIFI_Disconnect(&me->m_esWifiObj);
             FW_ASSERT(status == ES_WIFI_STATUS_OK);
+            */
             me->m_stateTimer.Start(UNJOINING_TIMEOUT_MS);
             me->Raise(new Evt(DONE));
             return Q_HANDLED();

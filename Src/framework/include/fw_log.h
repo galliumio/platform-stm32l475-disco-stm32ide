@@ -126,6 +126,7 @@ public:
     static void PutStrOver(Hsmn infHsmn, char const *str, uint32_t oldLen);
     static uint32_t Print(Hsmn infHsmn, char const *format, ...);
     static uint32_t PrintItem(Hsmn infHsmn, uint32_t index, uint32_t minWidth, uint32_t itemPerLine, char const *format, ...);
+    static void FloatToStr(char *buf, uint32_t len, float v, uint32_t totalWidth, uint32_t decimalPlaces);
     static void Event(Type type, Hsmn hsmn, QP::QEvt const *e, char const *func);
     static void ErrorEvent(Type type, Hsmn hsmn, ErrorEvt const &e, char const *func);
     static void Debug(Type type, Hsmn hsmn, char const *format, ...);

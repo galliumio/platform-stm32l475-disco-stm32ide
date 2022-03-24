@@ -108,6 +108,15 @@ extern "C" void BspTrace(char const *buf, uint32_t len) {
     WriteUart("\r", 1);
 }
 
+// Hooks required by multi-threading support for newlib malloc.
+extern "C" void __malloc_lock() {
+    QF_INT_DISABLE();
+}
+
+extern "C" void __malloc_unlock() {
+    QF_INT_ENABLE();
+}
+
 uint32_t GetSystemMs() {
     return HAL_GetTick() * BSP_MSEC_PER_TICK;
 }

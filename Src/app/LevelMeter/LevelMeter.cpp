@@ -299,7 +299,14 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
             me->m_pitch = asin(x/G) * 180/PI;
             me->m_roll = asin(y/G) * 180/PI;
             */
-            LOG("pitch=%06.2f, roll=%06.2f", me->m_pitch, me->m_roll);
+            char val1[10];
+            char val2[10];
+            Log::FloatToStr(val1, sizeof(val1), me->m_pitch,  6,  2);
+            Log::FloatToStr(val2, sizeof(val2), me->m_roll,  6,  2);
+            LOG("pitch=%s, roll=%s", val1, val2);
+            // Avoids (v)snprintf with %f since GCC 10 causes memory leak.
+            // This is kept as comment for reference.
+            //LOG("pitch=%6.2f, roll=%6.2f", me->m_pitch, me->m_roll);
 
             // Reads humidity and temperature data.
             // Since they are slow changing, it's sufficient to save the last values.
@@ -309,7 +316,9 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
                 me->m_humidity = report.m_humidity;
                 me->m_temperature = report.m_temperature;
             }
-            LOG("humid=%f, temp=%f", me->m_humidity, me->m_temperature);
+            Log::FloatToStr(val1, sizeof(val1), me->m_humidity,  5,  2);
+            Log::FloatToStr(val2, sizeof(val2), me->m_temperature,  5,  2);
+            LOG("humid=%s, temp=%s", val1, val2);
 
             me->Raise(new Evt(REDRAW));
             // @todo Currently when the destination (to) of a msg is undefined, the server sends to all nodes.
@@ -346,26 +355,36 @@ QState LevelMeter::Normal(LevelMeter * const me, QEvt const * const e) {
     return Q_SUPER(&LevelMeter::Started);
 }
 
+
 QState LevelMeter::Redrawing(LevelMeter * const me, QEvt const * const e) {
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
             me->Send(new DispDrawBeginReq(), ILI9341);
+            char val[10];
             char buf[30];
-            snprintf(buf, sizeof(buf), "P= %06.2f", me->m_pitch);
+
+            Log::FloatToStr(val, sizeof(val), me->m_pitch,  6,  2);
+            snprintf(buf, sizeof(buf), "P= %s", val);
             me->Send(new DispDrawTextReq(buf, 10, 30, COLOR24_BLUE, COLOR24_GREEN, 4), ILI9341);
-            snprintf(buf, sizeof(buf), "R= %06.2f", me->m_roll);
+            Log::FloatToStr(val, sizeof(val), me->m_roll,  6,  2);
+            snprintf(buf, sizeof(buf), "R= %s", val);
             me->Send(new DispDrawTextReq(buf, 10, 90, COLOR24_BLUE, COLOR24_GREEN, 4), ILI9341);
 
-            snprintf(buf, sizeof(buf), "PT= %05.2f", me->m_pitchThres);
-            me->Send(new DispDrawTextReq(buf, 10, 150, COLOR24_BLACK, COLOR24_WHITE,4), ILI9341);
-            snprintf(buf, sizeof(buf), "RT= %05.2f", me->m_rollThres);
-            me->Send(new DispDrawTextReq(buf, 10, 210, COLOR24_BLACK, COLOR24_WHITE,4), ILI9341);
+            Log::FloatToStr(val, sizeof(val), me->m_pitchThres,  5,  2);
+            snprintf(buf, sizeof(buf), "PT= %s", val);
+            me->Send(new DispDrawTextReq(buf, 10, 150, COLOR24_BLACK, COLOR24_WHITE, 4), ILI9341);
+            Log::FloatToStr(val, sizeof(val), me->m_rollThres,  5,  2);
+            snprintf(buf, sizeof(buf), "RT= %s", val);
+            me->Send(new DispDrawTextReq(buf, 10, 210, COLOR24_BLACK, COLOR24_WHITE, 4), ILI9341);
 
-            snprintf(buf, sizeof(buf), "H= %05.2f", me->m_humidity);
-            me->Send(new DispDrawTextReq(buf, 10, 280, COLOR24_DARK_GRAY, COLOR24_WHITE,2), ILI9341);
-            snprintf(buf, sizeof(buf), "T= %05.2f", me->m_temperature);
-            me->Send(new DispDrawTextReq(buf, 120, 280, COLOR24_DARK_GRAY, COLOR24_WHITE,2), ILI9341);
+            Log::FloatToStr(val, sizeof(val), me->m_humidity,  5,  2);
+            snprintf(buf, sizeof(buf), "H= %s", val);
+            me->Send(new DispDrawTextReq(buf, 10, 280, COLOR24_DARK_GRAY, COLOR24_WHITE, 2), ILI9341);
+            Log::FloatToStr(val,  sizeof(val), me->m_temperature,  5,  2);
+            snprintf(buf, sizeof(buf), "T= %s", val);
+            me->Send(new DispDrawTextReq(buf, 120, 280, COLOR24_DARK_GRAY, COLOR24_WHITE, 2), ILI9341);
+
             me->Send(new DispDrawEndReq(), ILI9341);
             return Q_HANDLED();
         }

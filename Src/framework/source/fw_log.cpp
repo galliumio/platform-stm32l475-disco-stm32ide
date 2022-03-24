@@ -285,6 +285,40 @@ uint32_t Log::PrintItem(Hsmn infHsmn, uint32_t index, uint32_t minWidth, uint32_
     return Write(infHsmn, buf, len);
 }
 
+// @param buf - Buffer to store the output string.
+// @param bufSize - Size of buf in bytes.
+// @param float - Floating-point number to convert to string. Its value must fit in a 32-bit integer.
+// @param totalWidth - Total width (minimum) of output string including decimal point and decimal places (not including null-termination).
+// @param decimalPlaces - No. of decimal places (limited to the range [1..6])
+void Log::FloatToStr(char *buf, uint32_t bufSize, float v, uint32_t totalWidth, uint32_t decimalPlaces) {
+    FW_ASSERT(buf && bufSize);
+    const uint32_t FACTOR[] = {
+        1, 10, 100, 1000, 10000, 100000, 1000000
+    };
+    decimalPlaces = GREATER(decimalPlaces, 1);
+    decimalPlaces = LESS(decimalPlaces, 6);
+    FW_ASSERT(decimalPlaces < ARRAY_COUNT(FACTOR));
+    uint32_t factor = FACTOR[decimalPlaces];
+    int64_t d = static_cast<int64_t>(v * factor + ((v >= 0) ? 0.5 : -0.5));
+    d = (d >= 0) ? d % factor : (-d) % factor;
+    // totalWidth includes the decimal point. The following ensures the integral width is >= 1.
+    totalWidth = GREATER(totalWidth, decimalPlaces + 2);
+    int intWidth = totalWidth - decimalPlaces - 1;
+    if ((static_cast<int32_t>(v) == 0) && (v < 0)) {
+        // The integral part is "-0".
+        uint32_t padWidth = GREATER(intWidth - 2, 0);
+        padWidth = LESS(padWidth, bufSize - 1);
+        for (uint32_t i = 0; i < padWidth; i++) {
+            buf[i] = ' ';
+        }
+        snprintf(buf + padWidth, bufSize - padWidth, "-0.%0*ld", static_cast<int>(decimalPlaces), static_cast<int32_t>(d));
+
+    } else {
+        snprintf(buf, bufSize, "%*ld.%0*ld", intWidth, static_cast<int32_t>(v),
+                 static_cast<int>(decimalPlaces), static_cast<int32_t>(d));
+    }
+}
+
 void Log::Event(Type type, Hsmn hsmn, QP::QEvt const *e, char const *func) {
     FW_ASSERT(e && func);
     Hsm *hsm = Fw::GetHsm(hsmn);
