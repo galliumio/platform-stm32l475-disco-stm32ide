@@ -53,6 +53,7 @@ namespace FW {
 void Active::Start(uint8_t prio) {
     Fw::Add(m_hsm.GetHsmn(), &m_hsm, this);
     m_hsm.Init(this);
+    m_thread = &m_tlsNewLib;
     QActive::start(prio, m_evtQueueStor, ARRAY_COUNT(m_evtQueueStor), NULL, 0);
 }
 

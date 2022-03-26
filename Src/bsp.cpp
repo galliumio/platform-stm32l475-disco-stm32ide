@@ -196,6 +196,14 @@ void QXK::onIdle(void) {
 #endif
 }
 
+// NOTE: the context-switch callback is called with interrupts DISABLED
+extern "C" void QXK_onContextSw(QActive *prev, QActive *next) {
+    (void)prev;
+    if (next != (QActive *)0) { // next is not the QK idle loop?
+        _impure_ptr = static_cast<struct _reent *>(next->m_thread); // switch to next TLS
+    }
+}
+
 //............................................................................
 extern "C" void Q_onAssert(char const * const module, int loc) {
     //

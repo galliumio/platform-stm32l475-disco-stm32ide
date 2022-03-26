@@ -274,6 +274,10 @@ __asm volatile (
 
     "  MOV     r0,#6            \n"
     "  MVN     r0,r0            \n" /* r0 := ~6 == 0xFFFFFFF9 */
+    /* Gallium - Fixed in version 6.9.1 */
+#if (__ARM_ARCH != 6)               /* NOT Cortex-M0/M0+/M1 (v6-M, v6S-M)? */
+    "  DSB                      \n" /* ARM Erratum 838869 */
+#endif                              /* NOT (v6-M, v6S-M) */
     "  BX      r0               \n" /* exception-return to the QXK activator */
 
     /*=========================================================================
@@ -384,6 +388,8 @@ __asm volatile (
 #else                               /* M3/M4/M7 */
     "  MOV     r0,#0            \n"
     "  MSR     BASEPRI,r0       \n" /* enable interrupts (clear BASEPRI) */
+    /* Gallium - Fixed in version 6.9.1 */
+    "  DSB                      \n" /* ARM Erratum 838869 */
 #endif                              /* M3/M4/M7 */
     /*>>>>>>>>>>>>>>>>>>>>>>>> CRITICAL SECTION END >>>>>>>>>>>>>>>>>>>>>>>>>*/
     "  BX      lr               \n" /* return to the preempted AO-thread */
@@ -494,7 +500,10 @@ __asm volatile (
 
     /* set the PSP to the next thread's SP */
     "  MSR     PSP,r2           \n" /* Process Stack Pointer := r2 */
-
+    /* Gallium - Fixed in version 6.9.1 */
+#if (__ARM_ARCH != 6)               /* NOT Cortex-M0/M0+/M1 (v6-M, v6S-M)? */
+    "  DSB                      \n" /* ARM Erratum 838869 */
+#endif                              /* NOT (v6-M, v6S-M) */
     "  BX      lr               \n" /* return to the next extended-thread */
     );
 }
@@ -561,6 +570,8 @@ __asm volatile (
     "  MSR     BASEPRI,r0       \n" /* enable interrupts (clear BASEPRI) */
 #if (__ARM_FP != 0)                 /* if VFP available... */
     "  POP     {r0,pc}          \n" /* pop stack aligner and EXC_RETURN to PC */
+    /* Gallium - Fixed in version 6.9.1. */
+    "  DSB                      \n" /* ARM Erratum 838869 */
 #else                               /* no VFP */
     "  BX      lr               \n" /* return to the preempted task */
 #endif                              /* no VFP */

@@ -125,6 +125,7 @@ protected:
     HsmnReg m_hsmnRegStor[MAX_REGION_COUNT];
     HsmnRegMap m_hsmnRegMap;
     QP::QEvt const *m_evtQueueStor[EVT_QUEUE_COUNT];
+    struct _reent m_tlsNewLib;      // Thread-local-storage for NewLib.
 };
 
 } // namespace FW

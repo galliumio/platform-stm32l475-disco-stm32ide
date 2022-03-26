@@ -45,7 +45,7 @@ namespace APP {
 
 #define APP_HSM \
     ADD_HSM(SYSTEM, 1) \
-    ADD_HSM(CONSOLE, 2) \
+    ADD_HSM(CONSOLE, 1) \
     ADD_HSM(CMD_INPUT, 2) \
     ADD_HSM(CMD_PARSER, 2) \
     ADD_HSM(UART_ACT, 2) \

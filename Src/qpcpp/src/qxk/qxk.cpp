@@ -513,7 +513,9 @@ void QXK_activate_(void) {
 
     QXK_attr_.actPrio = static_cast<uint8_t>(pin); // restore base prio
 
-#if (defined QK_ON_CONTEXT_SW) || (defined Q_SPY)
+// Gallium - Fixed typo from "QK_ON_CONTEXT_SW". It was fixed in version 6.9.1.
+//           See https://sourceforge.net/p/qpc/bugs/280/.
+#if (defined QXK_ON_CONTEXT_SW) || (defined Q_SPY)
     if (pin != static_cast<uint_fast8_t>(0)) { // resuming an active object?
         a = QP::QF::active_[pin]; // the pointer to the preempted AO
 

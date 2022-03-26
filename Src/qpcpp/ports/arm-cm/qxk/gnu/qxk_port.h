@@ -38,6 +38,12 @@
 #ifndef qxk_port_h
 #define qxk_port_h
 
+//****************************************************************************
+//! activate the context-switch callback
+// Gallium - Enables hook QXK_onContextSw() in bsp.cpp to be called for NewLib
+//           _impure_ptr switching.
+#define QXK_ON_CONTEXT_SW 1
+
 // determination if the code executes in the ISR context
 #define QXK_ISR_CONTEXT_() (QXK_get_IPSR() != static_cast<uint32_t>(0))
 
@@ -56,6 +62,7 @@ static inline uint32_t QXK_get_IPSR(void) {
 // QXK ISR entry and exit
 #define QXK_ISR_ENTRY() ((void)0)
 
+// Gallium - Fixed in version 6.9.1. Added call to QXK_ARM_ERRATUM_838869().
 #define QXK_ISR_EXIT()  do { \
     QF_INT_DISABLE(); \
     if (QXK_sched_() != static_cast<uint_fast8_t>(0)) { \
@@ -63,7 +70,20 @@ static inline uint32_t QXK_get_IPSR(void) {
             static_cast<uint32_t>(1U << 28); \
     } \
     QF_INT_ENABLE(); \
+    QXK_ARM_ERRATUM_838869();  \
 } while (false)
+
+// Gallium - Fixed in version 6.9.1.
+#if (__ARM_ARCH == 6) // Cortex-M0/M0+/M1 (v6-M, v6S-M)?
+    #define QXK_ARM_ERRATUM_838869() ((void)0)
+#else // Cortex-M3/M4/M7 (v7-M)
+    // The following macro implements the recommended workaround for the
+    // ARM Erratum 838869. Specifically, for Cortex-M3/M4/M7 the DSB
+    // (memory barrier) instruction needs to be added before exiting an ISR.
+    //
+    #define QXK_ARM_ERRATUM_838869() \
+        __asm volatile ("dsb" ::: "memory")
+#endif
 
 // initialization of the QXK kernel
 #define QXK_INIT() QXK_init()

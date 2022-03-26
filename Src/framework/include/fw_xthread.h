@@ -71,6 +71,7 @@ protected:
     HsmnRegMap m_hsmnRegMap;
     QP::QEvt const *m_evtQueueStor[EVT_QUEUE_COUNT];
     uint64_t m_stackSto[ROUND_UP_DIV_8(STACK_SIZE_BYTE)];
+    struct _reent m_tlsNewLib;      // Thread-local-storage for NewLib.
 
 private:
     static void XThreadHandler(QXThread * const me) {
