@@ -57,7 +57,7 @@ public:
     void Start(uint8_t prio);
     void Add(Region *reg);
     Hsm &GetHsm() { return m_hsm; }
-    virtual void dispatch(QP::QEvt const * const e);
+    virtual void dispatch(QP::QEvt const * const e, std::uint_fast8_t const qs_id);
 
     // Redirection to m_hsm.
     Hsmn GetHsmn() const { return m_hsm.GetHsmn(); }

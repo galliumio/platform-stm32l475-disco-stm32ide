@@ -1,9 +1,10 @@
 /// @file
-/// @brief QP::QActive::QActive() definition
+/// @brief Internal (package scope) QXK/C++ interface.
+/// @ingroup qxk
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.8.0
-/// Last updated on  2020-01-13
+/// Last updated on  2020-01-16
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
@@ -35,26 +36,45 @@
 ///***************************************************************************
 /// @endcond
 
-#define QP_IMPL           // this is QP implementation
-#include "qf_port.hpp"    // QF port
+#ifndef QXK_PKG_HPP
+#define QXK_PKG_HPP
 
 namespace QP {
 
-//****************************************************************************
-QActive::QActive(QStateHandler const initial) noexcept
-  : QHsm(initial),
-    m_prio(0U)
-{
-    m_state.fun = Q_STATE_CAST(&QHsm::top);
-
-#ifdef QF_OS_OBJECT_TYPE
-    QF::bzero(&m_osObject, sizeof(m_osObject));
-#endif
-
-#ifdef QF_THREAD_TYPE
-    QF::bzero(&m_thread, sizeof(m_thread));
-#endif
-}
+//! timeout signals
+enum QXK_Timeouts : std::uint8_t {
+    QXK_DELAY_SIG = Q_USER_SIG,
+    QXK_QUEUE_SIG,
+    QXK_SEMA_SIG
+};
 
 } // namespace QP
 
+//****************************************************************************
+extern "C" {
+
+//! initialize the private stack of a given AO
+void QXK_stackInit_(void *thr, QP::QXThreadHandler const handler,
+             void * const stkSto, std::uint_fast16_t const stkSize) noexcept;
+
+//! called when a thread function returns
+void QXK_threadRet_(void) noexcept;
+
+} // extern "C"
+
+//! intertnal macro to encapsulate casting of pointers for MISRA deviations
+//
+/// @description
+/// This macro is specifically and exclusively used for casting pointers
+/// that are never de-referenced, but only used for internal bookkeeping and
+/// checking (via assertions) the correct operation of the QXK kernel.
+/// Such pointer casting is not compliant with MISRA C++ Rule 5-2-7
+/// as well as other messages (e.g., PC-Lint-Plus warning 826).
+/// Defining this specific macro for this purpose allows to selectively
+/// disable the warnings for this particular case.
+///
+#define QXK_PTR_CAST_(type_, ptr_) (reinterpret_cast<type_>(ptr_))
+
+#include "qf_pkg.hpp"  // QF package-scope interface
+
+#endif // QXK_PKG_HPP

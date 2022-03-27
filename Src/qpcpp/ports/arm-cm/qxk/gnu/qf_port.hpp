@@ -2,14 +2,14 @@
 /// @brief QF/C++ port to ARM Cortex-M, dual-mode QXK kernel, GNU-ARM toolset
 /// @cond
 ///***************************************************************************
-/// Last Updated for Version: 6.3.8
-/// Date of the Last Update:  2019-01-11
+/// Last updated for version 6.6.0
+/// Last updated on  2019-07-30
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
 ///                    Modern Embedded Software
 ///
-/// Copyright (C) 2005-2018 Quantum Leaps, LLC. All rights reserved.
+/// Copyright (C) 2005-2019 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -27,25 +27,25 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qf_port_h
-#define qf_port_h
+#ifndef QF_PORT_HPP
+#define QF_PORT_HPP
 
 // The maximum number of system clock tick rates
-#define QF_MAX_TICK_RATE        2
+#define QF_MAX_TICK_RATE        2U
 
 // QF interrupt disable/enable and log2()...
 #if (__ARM_ARCH == 6) // Cortex-M0/M0+/M1(v6-M, v6S-M)?
 
     // The maximum number of active objects in the application, see NOTE1
-    #define QF_MAX_ACTIVE       16
+    #define QF_MAX_ACTIVE       16U
 
     // Cortex-M0/M0+/M1(v6-M, v6S-M) interrupt disabling policy, see NOTE2
     #define QF_INT_DISABLE()    __asm volatile ("cpsid i")
@@ -62,12 +62,12 @@
     #define QF_AWARE_ISR_CMSIS_PRI 0
 
     // hand-optimized LOG2 in assembly for Cortex-M0/M0+/M1(v6-M, v6S-M)
-    #define QF_LOG2(n_) QF_qlog2(static_cast<uint32_t>(n_))
+    #define QF_LOG2(n_) QF_qlog2(static_cast<std::uint32_t>(n_))
 
 #else // Cortex-M3/M4/M7
 
     // The maximum number of active objects in the application, see NOTE1
-    #define QF_MAX_ACTIVE       32
+    #define QF_MAX_ACTIVE       32U
 
     // Gallium added.
     #define QF_MAX_EPOOL        4
@@ -88,7 +88,7 @@
         __asm volatile ("mrs %0,BASEPRI" : "=r" (basepri_) :: ); \
         __asm volatile ("cpsid i\n msr BASEPRI,%0\n cpsie i" \
                         :: "r" (QF_BASEPRI) : ); \
-    } while (0)
+    } while (false)
     #define QF_CRIT_EXIT(basepri_) \
         __asm volatile ("msr BASEPRI,%0" :: "r" (basepri_) : )
 
@@ -99,23 +99,23 @@
     #define QF_AWARE_ISR_CMSIS_PRI (QF_BASEPRI >> (8 - __NVIC_PRIO_BITS))
 
     // Cortex-M3/M4/M7 provide the CLZ instruction for fast LOG2
-    #define QF_LOG2(n_) (static_cast<uint_fast8_t>( \
+    #define QF_LOG2(n_) (static_cast<std::uint_fast8_t>( \
         32U - __builtin_clz(static_cast<unsigned>(n_))))
 
 #endif
 
 #define QF_CRIT_EXIT_NOP()      __asm volatile ("isb")
 
-#include "qep_port.h" // QEP port
+#include "qep_port.hpp" // QEP port
 
 #if (__ARM_ARCH == 6) // Cortex-M0/M0+/M1(v6-M, v6S-M)?
     // hand-optimized quick LOG2 in assembly
     extern "C" uint_fast8_t QF_qlog2(uint32_t x);
 #endif // Cortex-M0/M0+/M1(v6-M, v6S-M)
 
-#include "qxk_port.h" // QXK dual-mode kernel port
-#include "qf.h"       // QF platform-independent public interface
-#include "qxthread.h" // QXK extended thread interface
+#include "qxk_port.hpp" // QXK dual-mode kernel port
+#include "qf.hpp"       // QF platform-independent public interface
+#include "qxthread.hpp" // QXK extended thread interface
 
 //****************************************************************************
 // NOTE1:
@@ -155,11 +155,11 @@
 //
 // NOTE5:
 // The selective disabling of "QF-aware" interrupts with the BASEPRI register
-// has a problem on ARM Cortex-M7 core r0p1 (see ARM-EPM-064408, errata
+// has a problem on ARM Cortex-M7 core r0p1 (see SDEN-1068427, errata
 // 837070). The workaround recommended by ARM is to surround MSR BASEPRI with
 // the CPSID i/CPSIE i pair, which is implemented in the QF_INT_DISABLE()
 // macro. This workaround works also for Cortex-M3/M4 cores.
 //
 
-#endif // qf_port_h
+#endif // QF_PORT_HPP
 

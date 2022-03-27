@@ -184,6 +184,12 @@ static void ParseMAC(char* ptr, uint8_t* arr)
     hexcnt = 1;
     if(*ptr != ':')
     {
+      // Gallium - There are cases where hexcnt returned by ParseHexNumber() is 0 and will cause an infinite loop
+      //           and buffer overrun of arr[]. Added index check to avoid hardfault.
+      if (hexnum >= 6) {
+          DEBUG("ParseMAC - Invalid MAC\n");
+          return;
+      }
       arr[hexnum++] = ParseHexNumber(ptr, &hexcnt);
     }
     ptr = ptr + hexcnt;

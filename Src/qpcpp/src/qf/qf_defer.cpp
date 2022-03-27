@@ -3,14 +3,14 @@
 /// @ingroup qf
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.3.2
-/// Last updated on  2018-06-16
+/// Last updated for version 6.9.1
+/// Last updated on  2020-09-17
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2018 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,22 +28,23 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#define QP_IMPL           // this is QP implementation
-#include "qf_port.h"      // QF port
-#include "qf_pkg.h"       // QF package-scope interface
-#include "qassert.h"      // QP embedded systems-friendly assertions
-#ifdef Q_SPY              // QS software tracing enabled?
-    #include "qs_port.h"  // include QS port
+#define QP_IMPL             // this is QP implementation
+#include "qf_port.hpp"      // QF port
+#include "qf_pkg.hpp"       // QF package-scope interface
+#include "qassert.h"        // QP embedded systems-friendly assertions
+#ifdef Q_SPY                // QS software tracing enabled?
+    #include "qs_port.hpp"  // QS port
+    #include "qs_pkg.hpp"   // QS facilities for pre-defined trace records
 #else
-    #include "qs_dummy.h" // disable the QS software tracing
+    #include "qs_dummy.hpp" // disable the QS software tracing
 #endif // Q_SPY
 
 namespace QP {
@@ -73,17 +74,17 @@ Q_DEFINE_THIS_MODULE("qf_defer")
 /// @sa
 /// QP::QActive::recall(), QP::QEQueue, QP::QActive::flushDeferred()
 ///
-bool QActive::defer(QEQueue * const eq, QEvt const * const e) const {
-    bool status = eq->post(e, static_cast<uint_fast16_t>(0));
+bool QActive::defer(QEQueue * const eq, QEvt const * const e) const noexcept {
+    bool const status = eq->post(e, 0U, m_prio);
     QS_CRIT_STAT_
 
-    QS_BEGIN_(QS_QF_ACTIVE_DEFER, QS::priv_.locFilter[QS::AO_OBJ], this)
-        QS_TIME_();      // time stamp
-        QS_OBJ_(this);   // this active object
-        QS_OBJ_(eq);     // the deferred queue
-        QS_SIG_(e->sig); // the signal of the event
-        QS_2U8_(e->poolId_, e->refCtr_); // pool Id & ref Count
-    QS_END_()
+    QS_BEGIN_PRE_(QS_QF_ACTIVE_DEFER, m_prio)
+        QS_TIME_PRE_();      // time stamp
+        QS_OBJ_PRE_(this);   // this active object
+        QS_OBJ_PRE_(eq);     // the deferred queue
+        QS_SIG_PRE_(e->sig); // the signal of the event
+        QS_2U8_PRE_(e->poolId_, e->refCtr_); // pool Id & ref Count
+    QS_END_PRE_()
 
     return status;
 }
@@ -109,52 +110,50 @@ bool QActive::defer(QEQueue * const eq, QEvt const * const e) const {
 /// @sa
 /// QP::QActive::recall(), QP::QEQueue, QP::QActive::postLIFO_()
 ///
-bool QActive::recall(QEQueue * const eq) {
-    QEvt const * const e = eq->get(); // try to get evt from deferred queue
+bool QActive::recall(QEQueue * const eq) noexcept {
+    QEvt const * const e = eq->get(m_prio); // get evt from deferred queue
     bool recalled;
 
     // event available?
-    if (e != static_cast<QEvt const *>(0)) {
-        this->postLIFO(e); // post it to the _front_ of the AO's queue
+    if (e != nullptr) {
+        QActive::postLIFO(e); // post it to the _front_ of the AO's queue
 
         QF_CRIT_STAT_
-        QF_CRIT_ENTRY_();
+        QF_CRIT_E_();
 
         // is it a dynamic event?
-        if (e->poolId_ != static_cast<uint8_t>(0)) {
+        if (e->poolId_ != 0U) {
 
             // after posting to the AO's queue the event must be referenced
             // at least twice: once in the deferred event queue (eq->get()
             // did NOT decrement the reference counter) and once in the
             // AO's event queue.
-            Q_ASSERT_CRIT_(210, e->refCtr_ >= static_cast<uint8_t>(2));
+            Q_ASSERT_CRIT_(210, e->refCtr_ >= 2U);
 
             // we need to decrement the reference counter once, to account
             // for removing the event from the deferred event queue.
             QF_EVT_REF_CTR_DEC_(e); // decrement the reference counter
         }
 
-        QS_BEGIN_NOCRIT_(QS_QF_ACTIVE_RECALL,
-                         QS::priv_.locFilter[QS::AO_OBJ], this)
-            QS_TIME_();      // time stamp
-            QS_OBJ_(this);   // this active object
-            QS_OBJ_(eq);     // the deferred queue
-            QS_SIG_(e->sig); // the signal of the event
-            QS_2U8_(e->poolId_, e->refCtr_); // pool Id & ref Count
-        QS_END_NOCRIT_()
+        QS_BEGIN_NOCRIT_PRE_(QS_QF_ACTIVE_RECALL, m_prio)
+            QS_TIME_PRE_();      // time stamp
+            QS_OBJ_PRE_(this);   // this active object
+            QS_OBJ_PRE_(eq);     // the deferred queue
+            QS_SIG_PRE_(e->sig); // the signal of the event
+            QS_2U8_PRE_(e->poolId_, e->refCtr_); // pool Id & ref Count
+        QS_END_NOCRIT_PRE_()
 
-        QF_CRIT_EXIT_();
+        QF_CRIT_X_();
         recalled = true;
     }
     else {
         QS_CRIT_STAT_
 
-        QS_BEGIN_(QS_QF_ACTIVE_RECALL_ATTEMPT,
-                  QS::priv_.locFilter[QS::AO_OBJ], this)
-            QS_TIME_();      // time stamp
-            QS_OBJ_(this);   // this active object
-            QS_OBJ_(eq);     // the deferred queue
-        QS_END_()
+        QS_BEGIN_PRE_(QS_QF_ACTIVE_RECALL_ATTEMPT, m_prio)
+            QS_TIME_PRE_();      // time stamp
+            QS_OBJ_PRE_(this);   // this active object
+            QS_OBJ_PRE_(eq);     // the deferred queue
+        QS_END_PRE_()
 
         recalled = false;
     }
@@ -176,11 +175,11 @@ bool QActive::recall(QEQueue * const eq) {
 /// @sa
 /// QP::QActive::defer(), QP::QActive::recall(), QP::QEQueue
 ///
-uint_fast16_t QActive::flushDeferred(QEQueue * const eq) const {
-    uint_fast16_t n = static_cast<uint_fast16_t>(0);
-    for (QEvt const *e = eq->get();
-         e != static_cast<QEvt const *>(0);
-         e = eq->get())
+std::uint_fast16_t QActive::flushDeferred(QEQueue * const eq) const noexcept {
+    std::uint_fast16_t n = 0U;
+    for (QEvt const *e = eq->get(m_prio);
+         e != nullptr;
+         e = eq->get(m_prio))
     {
         QF::gc(e); // garbage collect
         ++n; // count the flushed event

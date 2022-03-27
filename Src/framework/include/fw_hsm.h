@@ -80,7 +80,7 @@ public:
 
     // Obsolete. Use Raise() instead to post to the reminder/internal event queue of an HSM.
     // This is used for immediate event communications within an HSM.
-    void PostReminder(Evt const *e) { m_reminderQueue.post(e, QP::QF_NO_MARGIN); }
+    void PostReminder(Evt const *e) { m_reminderQueue.post(e, QP::QF_NO_MARGIN, 0); }
     void Raise(Evt *e) {
         e->SetTo(m_hsmn);
         e->SetFrom(m_hsmn);

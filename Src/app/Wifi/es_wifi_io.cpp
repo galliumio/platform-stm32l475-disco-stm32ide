@@ -195,6 +195,8 @@ int16_t SPI_WIFI_ReceiveData(uint8_t *pData, uint16_t len, uint32_t timeout)
   return length;
 }
 
+// Not used - Replaced by Wifi::WaitCmdDataRdyHigh().
+/*
 int wait_cmddata_rdy_high(int timeout)
 {
   int tickstart = HAL_GetTick();
@@ -207,6 +209,7 @@ int wait_cmddata_rdy_high(int timeout)
   }
   return 0;
 }
+*/
 
 /**
   * @brief  Send wifi Data thru SPI

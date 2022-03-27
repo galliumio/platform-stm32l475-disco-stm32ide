@@ -2,14 +2,14 @@
 /// @brief QXK/C++ port to ARM Cortex-M, GNU-ARM toolset
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.0.3
-/// Last updated on  2017-12-09
+/// Last updated for version 6.9.2a
+/// Last updated on  2021-01-31
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) Quantum Leaps, LLC. All rights reserved.
+/// Copyright (C) 2005-2021 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -27,16 +27,16 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qxk_port_h
-#define qxk_port_h
+#ifndef QXK_PORT_HPP
+#define QXK_PORT_HPP
 
 //****************************************************************************
 //! activate the context-switch callback
@@ -45,7 +45,7 @@
 #define QXK_ON_CONTEXT_SW 1
 
 // determination if the code executes in the ISR context
-#define QXK_ISR_CONTEXT_() (QXK_get_IPSR() != static_cast<uint32_t>(0))
+#define QXK_ISR_CONTEXT_() (QXK_get_IPSR() != 0U)
 
 __attribute__((always_inline))
 static inline uint32_t QXK_get_IPSR(void) {
@@ -55,25 +55,21 @@ static inline uint32_t QXK_get_IPSR(void) {
 }
 
 // trigger the PendSV exception to pefrom the context switch
-#define QXK_CONTEXT_SWITCH_() \
-    (*Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = \
-        static_cast<uint32_t>(1U << 28))
+#define QXK_CONTEXT_SWITCH_()  \
+    *Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = (1U << 28U)
 
 // QXK ISR entry and exit
 #define QXK_ISR_ENTRY() ((void)0)
 
-// Gallium - Fixed in version 6.9.1. Added call to QXK_ARM_ERRATUM_838869().
-#define QXK_ISR_EXIT()  do { \
-    QF_INT_DISABLE(); \
-    if (QXK_sched_() != static_cast<uint_fast8_t>(0)) { \
-        *Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = \
-            static_cast<uint32_t>(1U << 28); \
-    } \
-    QF_INT_ENABLE(); \
+#define QXK_ISR_EXIT()  do {   \
+    QF_INT_DISABLE();          \
+    if (QXK_sched_() != 0U) {  \
+        QXK_CONTEXT_SWITCH_(); \
+    }                          \
+    QF_INT_ENABLE();           \
     QXK_ARM_ERRATUM_838869();  \
 } while (false)
 
-// Gallium - Fixed in version 6.9.1.
 #if (__ARM_ARCH == 6) // Cortex-M0/M0+/M1 (v6-M, v6S-M)?
     #define QXK_ARM_ERRATUM_838869() ((void)0)
 #else // Cortex-M3/M4/M7 (v7-M)
@@ -88,7 +84,9 @@ static inline uint32_t QXK_get_IPSR(void) {
 // initialization of the QXK kernel
 #define QXK_INIT() QXK_init()
 extern "C" void QXK_init(void);
+extern "C" void QXK_thread_ret(void);
 
-#include "qxk.h" // QXK platform-independent public interface
+#include "qxk.hpp" // QXK platform-independent public interface
 
-#endif // qxk_port_h
+#endif // QXK_PORT_HPP
+

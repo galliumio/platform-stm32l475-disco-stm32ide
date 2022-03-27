@@ -4,14 +4,14 @@
 /// @ingroup qxk
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.2.0
-/// Last updated on  2018-03-16
+/// Last updated for version 6.9.1
+/// Last updated on  2020-09-15
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2018 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -29,44 +29,33 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qxk_h
-#define qxk_h
+#ifndef QXK_HPP
+#define QXK_HPP
 
-#include "qequeue.h"  // QXK kernel uses the native QF event queue
-#include "qmpool.h"   // QXK kernel uses the native QF memory pool
-#include "qpset.h"    // QXK kernel uses the native QF priority set
+#include "qequeue.hpp"  // QXK kernel uses the native QF event queue
+#include "qmpool.hpp"   // QXK kernel uses the native QF memory pool
+#include "qpset.hpp"    // QXK kernel uses the native QF priority set
 
 //****************************************************************************
 // QF configuration for QXK -- data members of the QActive class...
 
-//! Kernel-dependent type of the event queue used for QXK threads
-//
-/// @description
-/// QXK uses the native QF event queue QEQueue.
-///
+// QXK event-queue used for AOs
 #define QF_EQUEUE_TYPE      QEQueue
 
-//! Kernel-dependent OS-attribute of threads in QXK
+// QXK OS-object used to store the private stack poiner for extended threads.
+// (The private stack pointer is NULL for basic-threads).
 //
-/// @description
-/// QXK uses this member to store the private stack poiner for extended
-/// threads. (The private stack pointer is NULL for basic-threads).
-///
 #define QF_OS_OBJECT_TYPE   void*
 
-//! Kernel-dependent type of the thread attribute in QXK
-//
-/// @description
-/// QXK uses this member to store the private Thread-Local Storage pointer.
-///
+// QXK thread type used to store the private Thread-Local Storage pointer.
 #define QF_THREAD_TYPE      void*
 
 //! Access Thread-Local Storage (TLS) and cast it on the given @p type_
@@ -83,21 +72,21 @@ extern "C" {
 
 //! attributes of the QXK kernel
 struct QXK_Attr {
-    QP::QActive * volatile curr; //!< currently executing thread
-    QP::QActive * volatile next; //!< next thread to execute
-    uint8_t volatile actPrio;    //!< prio of the active basic thread
-    uint8_t volatile lockPrio;   //!< lock prio (0 == no-lock)
-    uint8_t volatile lockHolder; //!< prio of the lock holder
-    uint8_t volatile intNest;    //!< ISR nesting level
-    QP::QActive * idleThread;    //!< pointer to the idle thread
-    QP::QPSet readySet; //!< ready-set of basic- and extended-threads
+    QP::QActive * volatile curr;      //!< currently executing thread
+    QP::QActive * volatile next;      //!< next thread to execute
+    std::uint8_t volatile actPrio;    //!< prio of the active basic thread
+    std::uint8_t volatile lockPrio;   //!< lock prio (0 == no-lock)
+    std::uint8_t volatile lockHolder; //!< prio of the lock holder
+    std::uint8_t volatile intNest;    //!< ISR nesting level
+    QP::QActive * idleThread;         //!< pointer to the idle thread
+    QP::QPSet readySet;               //!< ready-set of all threads
 };
 
 //! global attributes of the QXK kernel
 extern QXK_Attr QXK_attr_;
 
 //! QXK scheduler finds the highest-priority thread ready to run
-uint_fast8_t QXK_sched_(void);
+std::uint_fast8_t QXK_sched_(void) noexcept;
 
 //! QXK activator activates the next active object. The activated AO preempts
 // the currently executing AOs.
@@ -105,7 +94,7 @@ uint_fast8_t QXK_sched_(void);
 void QXK_activate_(void);
 
 //! return the currently executing active-object/thread
-QP::QActive *QXK_current(void);
+QP::QActive *QXK_current(void) noexcept;
 
 #ifdef QXK_ON_CONTEXT_SW
 
@@ -139,7 +128,7 @@ QP::QActive *QXK_current(void);
 namespace QP {
 
 //! The scheduler lock status
-typedef uint_fast16_t QSchedStatus;
+using QSchedStatus = std::uint_fast16_t;
 
 //****************************************************************************
 //! QXK services.
@@ -155,10 +144,10 @@ typedef uint_fast16_t QSchedStatus;
 class QXK {
 public:
     //! QXK selective scheduler lock
-    static QSchedStatus schedLock(uint_fast8_t const ceiling);
+    static QSchedStatus schedLock(std::uint_fast8_t const ceiling) noexcept;
 
     //! QXK selective scheduler unlock
-    static void schedUnlock(QSchedStatus const stat);
+    static void schedUnlock(QSchedStatus const stat) noexcept;
 
     //! QXK idle callback (customized in BSPs for QXK)
     /// @description
@@ -171,11 +160,6 @@ public:
     ///
     /// @sa QP::QF::onIdle()
     static void onIdle(void);
-
-    //! get the current QXK version number string of the form X.Y.Z
-    static char_t const *getVersion(void) {
-        return versionStr;
-    }
 };
 
 } // namespace QP
@@ -192,7 +176,7 @@ public:
         /// @returns true if the code executes in the ISR context and false
         /// otherwise
         #define QXK_ISR_CONTEXT_() \
-            (QXK_attr_.intNest != static_cast<uint_fast8_t>(0))
+            (QXK_attr_.intNest != 0U)
     #endif // QXK_ISR_CONTEXT_
 
     // QXK-specific scheduler locking
@@ -202,45 +186,45 @@ public:
     #define QF_SCHED_STAT_ QSchedStatus lockStat_;
 
     //! Internal macro for selective scheduler locking.
-    #define QF_SCHED_LOCK_(prio_) do { \
-        if (QXK_ISR_CONTEXT_()) { \
-            lockStat_ = static_cast<QSchedStatus>(0xFF); \
-        } else { \
+    #define QF_SCHED_LOCK_(prio_) do {           \
+        if (QXK_ISR_CONTEXT_()) {                \
+            lockStat_ = 0xFFU;                   \
+        } else {                                 \
             lockStat_ = QXK::schedLock((prio_)); \
-        } \
+        }                                        \
     } while (false)
 
     //! Internal macro for selective scheduler unlocking.
-    #define QF_SCHED_UNLOCK_() do { \
-        if (lockStat_ != static_cast<QSchedStatus>(0xFF)) { \
+    #define QF_SCHED_UNLOCK_() do {      \
+        if (lockStat_ != 0xFFU) {        \
             QXK::schedUnlock(lockStat_); \
-        } \
+        }                                \
     } while (false)
 
     // QXK-specific native event queue operations...
     #define QACTIVE_EQUEUE_WAIT_(me_) \
-        Q_ASSERT_ID(110, (me_)->m_eQueue.m_frontEvt != static_cast<QEvt *>(0))
+        Q_ASSERT_ID(110, (me_)->m_eQueue.m_frontEvt != nullptr)
 
-    #define QACTIVE_EQUEUE_SIGNAL_(me_) do { \
-        QXK_attr_.readySet.insert(static_cast<uint_fast8_t>((me_)->m_prio)); \
-        if (!QXK_ISR_CONTEXT_()) { \
-            if (QXK_sched_() != static_cast<uint_fast8_t>(0)) { \
-                QXK_activate_(); \
-            } \
-        } \
+    #define QACTIVE_EQUEUE_SIGNAL_(me_) do {                   \
+        QXK_attr_.readySet.insert(                             \
+            static_cast<std::uint_fast8_t>((me_)->m_dynPrio)); \
+        if (!QXK_ISR_CONTEXT_()) {                             \
+            if (QXK_sched_() != 0U) {                          \
+                QXK_activate_();                               \
+            }                                                  \
+        }                                                      \
     } while (false)
 
     // QXK-specific native QF event pool operations...
     #define QF_EPOOL_TYPE_  QMPool
     #define QF_EPOOL_INIT_(p_, poolSto_, poolSize_, evtSize_) \
         (p_).init((poolSto_), (poolSize_), (evtSize_))
-    #define QF_EPOOL_EVENT_SIZE_(p_) \
-        static_cast<uint_fast16_t>((p_).getBlockSize())
-    #define QF_EPOOL_GET_(p_, e_, m_) \
-        ((e_) = static_cast<QEvt *>((p_).get((m_))))
-    #define QF_EPOOL_PUT_(p_, e_) ((p_).put(e_))
+    #define QF_EPOOL_EVENT_SIZE_(p_)  ((p_).getBlockSize())
+    #define QF_EPOOL_GET_(p_, e_, m_, qs_id_) \
+        ((e_) = static_cast<QEvt *>((p_).get((m_), (qs_id_))))
+    #define QF_EPOOL_PUT_(p_, e_, qs_id_) ((p_).put((e_), (qs_id_)))
 
 #endif // QP_IMPL
 
-#endif // qxk_h
+#endif // QXK_HPP
 

@@ -53,7 +53,7 @@ void Region::Init(Active *container) {
     m_container = container;
     container->Add(this);
     m_hsm.Init(container);
-    QHsm::init();
+    QHsm::init(0);
 }
 
 void Region::Init(XThread *container) {
@@ -61,14 +61,14 @@ void Region::Init(XThread *container) {
     m_container = container;
     container->Add(this);
     m_hsm.Init(container);
-    QHsm::init();
+    QHsm::init(0);
 }
 
-void Region::dispatch(QEvt const * const e) {
+void Region::Dispatch(QEvt const * const e) {
     // For region, e can be from the container active object's event queue (dynamic or static/timer),
     // or be a static event on the stack of the container active object.
     // Garbage collection, if needed, is done by the caller.
-    QHsm::dispatch(e);
+    QHsm::dispatch(e, 0);
     // Handle all reminder events generated as a result of e.
     m_hsm.DispatchReminder();
 }

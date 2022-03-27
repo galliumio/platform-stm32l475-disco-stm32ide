@@ -58,8 +58,8 @@ void Hsm::Init(QActive *container) {
 }
 
 void Hsm::DispatchReminder() {
-    while (QEvt const *reminder = m_reminderQueue.get()) {
-        m_qhsm->QHsm::dispatch(reminder);
+    while (QEvt const *reminder = m_reminderQueue.get(0)) {
+        m_qhsm->QHsm::dispatch(reminder, 0);
         // A reminder event must be dynamic and is garbage collected after being processed.
         FW_ASSERT(QF_EVT_POOL_ID_(reminder) != 0);
         // A reminder event must be an internal or interface event (but not a timer event).

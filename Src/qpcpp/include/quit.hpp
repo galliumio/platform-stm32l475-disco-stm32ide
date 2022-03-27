@@ -1,16 +1,15 @@
 /// @file
-/// @brief Internal (package scope) QXK/C++ interface.
-/// @ingroup qxk
+/// @brief "QUIT" QP Unit Internal Test
 /// @cond
 ///***************************************************************************
-/// Last updated for version 5.9.7
-/// Last updated on  2017-08-19
+/// Last updated for version 6.9.2
+/// Last updated on  2021-01-12
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) Quantum Leaps, LLC. All rights reserved.
+/// Copyright (C) 2005-2021 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,40 +27,37 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
+///
+#ifndef QUIT_HPP
+#define QUIT_HPP
 
-#ifndef qxk_pkg_h
-#define qxk_pkg_h
+// macro to check an expectation
+#define EXPECT(cond_) ((cond_) \
+        ? (void)0 : QP::QUIT_fail_(#cond_, &Q_this_module_[0], __LINE__))
 
 namespace QP {
 
-//! timeout signals
-enum QXK_Timeouts {
-    QXK_DELAY_SIG = Q_USER_SIG,
-    QXK_QUEUE_SIG,
-    QXK_SEMA_SIG
-};
+void TEST(char const *title);
+void QUIT_fail_(char const *cond, char const *module, int line);
+void onRunTests(void); // user-defined callback to run the tests
 
 } // namespace QP
 
-//****************************************************************************
-extern "C" {
+#include "qf_port.hpp"   // QF/C++ port from the port directory
+#include "qassert.h"     // QP embedded systems-friendly assertions
 
-//! initialize the private stack of a given AO
-void QXK_stackInit_(void *thr, QP::QXThreadHandler handler,
-                    void *stkSto, uint_fast16_t stkSize);
+#ifdef Q_SPY /* software tracing enabled? */
+#include "qs_port.hpp"   // QS/C port from the port directory
+#else
+#include "qs_dummy.hpp"  // QS/C dummy (inactive) interface
+#endif
 
-//! called when a thread function returns
-void QXK_threadRet_(void);
+#endif // QUIT_HPP
 
-} // extern "C"
-
-#include "qf_pkg.h"  // QF package-scope interface
-
-#endif // qxk_pkg_h

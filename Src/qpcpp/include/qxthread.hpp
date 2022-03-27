@@ -3,14 +3,14 @@
 /// @ingroup qxk
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.5.0
-/// Last updated on  2019-03-24
+/// Last updated for version 6.9.1
+/// Last updated on  2020-09-18
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
 ///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2019 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,26 +28,21 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qxthread_h
-#define qxthread_h
-
-//! no-timeout sepcification when blocking on queues or semaphores
-#define QXTHREAD_NO_TIMEOUT  (static_cast<uint_fast16_t>(0))
+#ifndef QXTHREAD_HPP
+#define QXTHREAD_HPP
 
 namespace QP {
 
-class QXThread; // forward declaration
-
-//! Thread handler pointer-to-function
-typedef void (*QXThreadHandler)(QXThread * const me);
+//! no-timeout sepcification when blocking on queues or semaphores
+static constexpr std::uint_fast16_t QXTHREAD_NO_TIMEOUT = 0U;
 
 //****************************************************************************
 //! Extended (blocking) thread of the QXK preemptive kernel
@@ -73,67 +68,64 @@ public:
 
     //! public constructor
     QXThread(QXThreadHandler const handler,
-             uint_fast8_t const tickRate = static_cast<uint_fast8_t>(0));
+             std::uint_fast8_t const tickRate = 0U) noexcept;
 
     //! delay (block) the current extended thread for a specified # ticks
-    static bool delay(uint_fast16_t const nTicks);
+    static bool delay(std::uint_fast16_t const nTicks) noexcept;
 
     //! cancel the delay
-    bool delayCancel(void);
+    bool delayCancel(void) noexcept;
 
     //! obtain a message from the private message queue (block if no messages)
     static QEvt const *queueGet(
-        uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT);
+        std::uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT) noexcept;
 
     // virtual function overrides...
-    //! Executes the top-most initial transition in QP::QMsm.
-    virtual void init(QEvt const * const e);
-    virtual void init(void) { this->init(static_cast<QEvt const *>(0)); }
+    //! Executes the top-most initial transition in HSM
+    void init(void const * const e,
+              std::uint_fast8_t const qs_id) noexcept override;
+    void init(std::uint_fast8_t const qs_id) noexcept override {
+        this->init(nullptr, qs_id);
+    }
 
-    //! Dispatches an event to QMsm
-    virtual void dispatch(QEvt const * const e);
+    //! Dispatches an event to HSM
+    void dispatch(QEvt const * const e,
+                  std::uint_fast8_t const qs_id) noexcept override;
 
     //! Starts execution of an extended thread and registers the thread
     //! with the framework.
-    virtual void start(uint_fast8_t const prio,
-                       QEvt const *qSto[], uint_fast16_t const qLen,
-                       void * const stkSto, uint_fast16_t const stkSize,
-                       QEvt const * const ie);
+    void start(std::uint_fast8_t const prio,
+               QEvt const * * const qSto, std::uint_fast16_t const qLen,
+               void * const stkSto, std::uint_fast16_t const stkSize,
+               void const * const par) override;
 
     //! Overloaded start function (no initialization event)
-    virtual void start(uint_fast8_t const prio,
-                       QEvt const *qSto[], uint_fast16_t const qLen,
-                       void * const stkSto, uint_fast16_t const stkSize)
+    void start(std::uint_fast8_t const prio,
+               QEvt const * * const qSto, std::uint_fast16_t const qLen,
+               void * const stkSto, std::uint_fast16_t const stkSize) override
     {
-        this->start(prio, qSto, qLen, stkSto, stkSize,
-                    static_cast<QEvt const *>(0));
+        this->start(prio, qSto, qLen, stkSto, stkSize, nullptr);
     }
 
 #ifndef Q_SPY
     //! Posts an event @p e directly to the event queue of the extended
     //! thread @p me using the First-In-First-Out (FIFO) policy.
-    virtual bool post_(QEvt const * const e, uint_fast16_t const margin);
+    bool post_(QEvt const * const e,
+               std::uint_fast16_t const margin) noexcept override;
 #else
-    virtual bool post_(QEvt const * const e, uint_fast16_t const margin,
-                       void const * const sender);
+    bool post_(QEvt const * const e, std::uint_fast16_t const margin,
+               void const * const sender) noexcept override;
 #endif
 
     //! Posts an event directly to the event queue of the active object
     //! using the Last-In-First-Out (LIFO) policy.
-    virtual void postLIFO(QEvt const * const e);
-
-    //! get the blocking object for this thread (NULL if not blocked)
-    bool isBlockedOn(void const * const obj
-                     = static_cast<void const *>(0)) const
-    {
-        return reinterpret_cast<void const *>(m_temp.obj) == obj;
-    }
+    void postLIFO(QEvt const * const e) noexcept override;
 
 private:
-    void block_(void) const;
-    void unblock_(void) const;
-    void teArm_(enum_t const sig, uint_fast16_t const nTicks);
-    bool teDisarm_(void);
+    void block_(void) const noexcept;
+    void unblock_(void) const noexcept;
+    void teArm_(enum_t const sig, std::uint_fast16_t const nTicks) noexcept;
+    bool teDisarm_(void) noexcept;
 
     // attributes...
     QTimeEvt m_timeEvt; //!< time event to handle blocking timeouts
@@ -161,23 +153,22 @@ private:
 class QXSemaphore {
 public:
     //! initialize the counting semaphore
-    void init(uint_fast16_t const count,
-              uint_fast16_t const max_count
-                  = static_cast<uint_fast16_t>(0xFFFF));
+    void init(std::uint_fast16_t const count,
+              std::uint_fast16_t const max_count = 0xFFFFU) noexcept;
 
     //! wait (block) on the semaphore
-    bool wait(uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT);
+    bool wait(std::uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT) noexcept;
 
     //! try wait on the semaphore (non-blocking)
-    bool tryWait(void);
+    bool tryWait(void) noexcept;
 
     //! signal (unblock) the semaphore
-    bool signal(void);
+    bool signal(void) noexcept;
 
 private:
     QPSet m_waitSet; //!< set of extended threads waiting on this semaphore
-    uint16_t volatile m_count;  //!< semaphore up-down counter
-    uint16_t m_max_count; //!< maximum value of the semaphore counter
+    std::uint16_t volatile m_count;  //!< semaphore up-down counter
+    std::uint16_t m_max_count; //!< maximum value of the semaphore counter
 };
 
 //****************************************************************************
@@ -219,25 +210,25 @@ private:
 class QXMutex {
 public:
     //! initialize the QXK priority-ceiling mutex QP::QXMutex
-    void init(uint_fast8_t const ceiling);
+    void init(std::uint_fast8_t const ceiling) noexcept;
 
     //! lock the QXK priority-ceiling mutex QP::QXMutex
-    bool lock(uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT);
+    bool lock(std::uint_fast16_t const nTicks = QXTHREAD_NO_TIMEOUT) noexcept;
 
     //! try to lock the QXK priority-ceiling mutex QP::QXMutex
-    bool tryLock(void);
+    bool tryLock(void) noexcept;
 
     //! unlock the QXK priority-ceiling mutex QP::QXMutex
-    void unlock(void);
+    void unlock(void) noexcept;
 
 private:
     QPSet m_waitSet; //!< set of extended-threads waiting on this mutex
-    uint8_t volatile m_lockNest; //!< lock-nesting up-down counter
-    uint8_t volatile m_holderPrio; //!< priority of the lock holder thread
-    uint8_t m_ceiling; //< prioirty ceiling of this mutex
+    std::uint8_t volatile m_lockNest; //!< lock-nesting up-down counter
+    std::uint8_t volatile m_holderPrio; //!< prio of the lock holder thread
+    std::uint8_t m_ceiling; //!< prioirty ceiling of this mutex
 };
 
 } // namespace QP
 
-#endif // qxthread_h
+#endif // QXTHREAD_HPP
 

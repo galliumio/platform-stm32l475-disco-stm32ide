@@ -59,7 +59,7 @@ public:
     void Init(Active *container);
     void Init(XThread *container);
     Hsm &GetHsm() { return m_hsm; }
-    virtual void dispatch(QP::QEvt const * const e);
+    void Dispatch(QP::QEvt const * const e);
 
     // Redirection to m_hsm.
     Hsmn GetHsmn() const { return m_hsm.GetHsmn(); }

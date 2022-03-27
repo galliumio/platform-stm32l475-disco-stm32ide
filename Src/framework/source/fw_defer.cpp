@@ -62,7 +62,7 @@ bool DeferEQueue::Defer(QEvt const *e) {
     // A deferred event must be dynamic (i.e. it cannot be on the stack).
     FW_ASSERT(QF_EVT_POOL_ID_(e) != 0);
     // Use LIFO to act like stack to preserve order of multiple deferred events.
-    QEQueue::postLIFO(e);
+    QEQueue::postLIFO(e, 0);
     return true;
 }
 

@@ -4,14 +4,14 @@
 /// @ingroup qf
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.3.2
-/// Last updated on  2018-06-16
+/// Last updated for version 6.9.3
+/// Last updated on  2021-02-26
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2018 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2021 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -29,22 +29,23 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#define QP_IMPL           // this is QP implementation
-#include "qf_port.h"      // QF port
-#include "qf_pkg.h"       // QF package-scope interface
-#include "qassert.h"      // QP embedded systems-friendly assertions
-#ifdef Q_SPY              // QS software tracing enabled?
-    #include "qs_port.h"  // include QS port
+#define QP_IMPL             // this is QP implementation
+#include "qf_port.hpp"      // QF port
+#include "qf_pkg.hpp"       // QF package-scope interface
+#include "qassert.h"        // QP embedded systems-friendly assertions
+#ifdef Q_SPY                // QS software tracing enabled?
+    #include "qs_port.hpp"  // QS port
+    #include "qs_pkg.hpp"   // QS facilities for pre-defined trace records
 #else
-    #include "qs_dummy.h" // disable the QS software tracing
+    #include "qs_dummy.hpp" // disable the QS software tracing
 #endif // Q_SPY
 
 
@@ -85,16 +86,16 @@ enum_t QF_maxPubSignal_;
 /// The following example shows the typical initialization sequence of QF:
 /// @include qf_main.cpp
 ///
-void QF::psInit(QSubscrList * const subscrSto, enum_t const maxSignal) {
+void QF::psInit(QSubscrList * const subscrSto,
+                enum_t const maxSignal) noexcept
+{
     QF_subscrList_   = subscrSto;
     QF_maxPubSignal_ = maxSignal;
 
     // zero the subscriber list, so that the framework can start correctly
     // even if the startup code fails to clear the uninitialized data
     // (as is required by the C++ Standard)
-    bzero(subscrSto,
-             static_cast<uint_fast16_t>(static_cast<uint_fast16_t>(maxSignal)
-              * static_cast<uint_fast16_t>(sizeof(QSubscrList))));
+    bzero(subscrSto, static_cast<unsigned>(maxSignal) * sizeof(QSubscrList));
 }
 
 //****************************************************************************
@@ -115,26 +116,28 @@ void QF::psInit(QSubscrList * const subscrSto, enum_t const maxSignal) {
 /// subscribe to this event are _not_ affected.
 ///
 #ifndef Q_SPY
-void QF::publish_(QEvt const * const e) {
+void QF::publish_(QEvt const * const e) noexcept {
 #else
-void QF::publish_(QEvt const * const e, void const * const sender) {
+void QF::publish_(QEvt const * const e,
+                  void const * const sender,
+                  std::uint_fast8_t const qs_id) noexcept
+{
 #endif
     /// @pre the published signal must be within the configured range
     Q_REQUIRE_ID(100, static_cast<enum_t>(e->sig) < QF_maxPubSignal_);
 
     QF_CRIT_STAT_
-    QF_CRIT_ENTRY_();
+    QF_CRIT_E_();
 
-    QS_BEGIN_NOCRIT_(QS_QF_PUBLISH,
-                     static_cast<void *>(0), static_cast<void *>(0))
-        QS_TIME_();                      // the timestamp
-        QS_OBJ_(sender);                 // the sender object
-        QS_SIG_(e->sig);                 // the signal of the event
-        QS_2U8_(e->poolId_, e->refCtr_); // pool Id & refCtr of the evt
-    QS_END_NOCRIT_()
+    QS_BEGIN_NOCRIT_PRE_(QS_QF_PUBLISH, qs_id)
+        QS_TIME_PRE_();                      // the timestamp
+        QS_OBJ_PRE_(sender);                 // the sender object
+        QS_SIG_PRE_(e->sig);                 // the signal of the event
+        QS_2U8_PRE_(e->poolId_, e->refCtr_); // pool Id & refCtr of the evt
+    QS_END_NOCRIT_PRE_()
 
     // is it a dynamic event?
-    if (e->poolId_ != static_cast<uint8_t>(0)) {
+    if (e->poolId_ != 0U) {
         // NOTE: The reference counter of a dynamic event is incremented to
         // prevent premature recycling of the event while the multicasting
         // is still in progress. At the end of the function, the garbage
@@ -147,28 +150,29 @@ void QF::publish_(QEvt const * const e, void const * const sender) {
 
     // make a local, modifiable copy of the subscriber list
     QPSet subscrList = QF_PTR_AT_(QF_subscrList_, e->sig);
-    QF_CRIT_EXIT_();
+    QF_CRIT_X_();
 
     if (subscrList.notEmpty()) { // any subscribers?
-        uint_fast8_t p = subscrList.findMax(); // the highest-prio subscriber
+        // the highest-prio subscriber
+        std::uint_fast8_t p = subscrList.findMax();
         QF_SCHED_STAT_
 
         QF_SCHED_LOCK_(p); // lock the scheduler up to prio 'p'
         do { // loop over all subscribers */
             // the prio of the AO must be registered with the framework
-            Q_ASSERT_ID(210, active_[p] != static_cast<QActive *>(0));
+            Q_ASSERT_ID(210, active_[p] != nullptr);
 
             // POST() asserts internally if the queue overflows
-            (void)active_[p]->POST(e, sender);
+            static_cast<void>(active_[p]->POST(e, sender));
 
-            subscrList.remove(p); // remove the handled subscriber
+            subscrList.rmove(p); // remove the handled subscriber
             if (subscrList.notEmpty()) {  // still more subscribers?
                 p = subscrList.findMax(); // the highest-prio subscriber
             }
             else {
-                p = static_cast<uint_fast8_t>(0); // no more subscribers
+                p = 0U; // no more subscribers
             }
-        } while (p != static_cast<uint_fast8_t>(0));
+        } while (p != 0U);
         QF_SCHED_UNLOCK_(); // unlock the scheduler
     }
 
@@ -191,32 +195,30 @@ void QF::publish_(QEvt const * const e, void const * const sender) {
 ///
 /// The following example shows how the Table active object subscribes
 /// to three signals in the initial transition:
-/// @include qf_subscribe.c
+/// @include qf_subscribe.cpp
 ///
 /// @sa
 /// QP::QF::publish_(), QP::QActive::unsubscribe(), and
 /// QP::QActive::unsubscribeAll()
 ///
-void QActive::subscribe(enum_t const sig) const {
-    uint_fast8_t p = static_cast<uint_fast8_t>(m_prio);
+void QActive::subscribe(enum_t const sig) const noexcept {
+    std::uint_fast8_t const p = static_cast<std::uint_fast8_t>(m_prio);
     Q_REQUIRE_ID(300, (Q_USER_SIG <= sig)
               && (sig < QF_maxPubSignal_)
-              && (static_cast<uint_fast8_t>(0) < p)
-              && (p <= static_cast<uint_fast8_t>(QF_MAX_ACTIVE))
+              && (0U < p) && (p <= QF_MAX_ACTIVE)
               && (QF::active_[p] == this));
 
     QF_CRIT_STAT_
-    QF_CRIT_ENTRY_();
+    QF_CRIT_E_();
 
-    QS_BEGIN_NOCRIT_(QS_QF_ACTIVE_SUBSCRIBE,
-                     QS::priv_.locFilter[QS::AO_OBJ], this)
-        QS_TIME_();    // timestamp
-        QS_SIG_(sig);  // the signal of this event
-        QS_OBJ_(this); // this active object
-    QS_END_NOCRIT_()
+    QS_BEGIN_NOCRIT_PRE_(QS_QF_ACTIVE_SUBSCRIBE, m_prio)
+        QS_TIME_PRE_();    // timestamp
+        QS_SIG_PRE_(sig);  // the signal of this event
+        QS_OBJ_PRE_(this); // this active object
+    QS_END_NOCRIT_PRE_()
 
     QF_PTR_AT_(QF_subscrList_, sig).insert(p); // insert into subscriber-list
-    QF_CRIT_EXIT_();
+    QF_CRIT_X_();
 }
 
 //****************************************************************************
@@ -243,30 +245,28 @@ void QActive::subscribe(enum_t const sig) const {
 /// QP::QF::publish_(), QP::QActive::subscribe(), and
 /// QP::QActive::unsubscribeAll()
 ///
-void QActive::unsubscribe(enum_t const sig) const {
-    uint_fast8_t p = static_cast<uint_fast8_t>(m_prio);
+void QActive::unsubscribe(enum_t const sig) const noexcept {
+    std::uint_fast8_t const p = static_cast<std::uint_fast8_t>(m_prio);
 
     //! @pre the singal and the prioriy must be in ragne, the AO must also
     // be registered with the framework
     Q_REQUIRE_ID(400, (Q_USER_SIG <= sig)
                       && (sig < QF_maxPubSignal_)
-                      && (static_cast<uint_fast8_t>(0) < p)
-                      && (p <= static_cast<uint_fast8_t>(QF_MAX_ACTIVE))
+                      && (0U < p) && (p <= QF_MAX_ACTIVE)
                       && (QF::active_[p] == this));
 
     QF_CRIT_STAT_
-    QF_CRIT_ENTRY_();
+    QF_CRIT_E_();
 
-    QS_BEGIN_NOCRIT_(QS_QF_ACTIVE_UNSUBSCRIBE,
-                     QS::priv_.locFilter[QS::AO_OBJ], this)
-        QS_TIME_();         // timestamp
-        QS_SIG_(sig);       // the signal of this event
-        QS_OBJ_(this);      // this active object
-    QS_END_NOCRIT_()
+    QS_BEGIN_NOCRIT_PRE_(QS_QF_ACTIVE_UNSUBSCRIBE, m_prio)
+        QS_TIME_PRE_();         // timestamp
+        QS_SIG_PRE_(sig);       // the signal of this event
+        QS_OBJ_PRE_(this);      // this active object
+    QS_END_NOCRIT_PRE_()
 
-    QF_PTR_AT_(QF_subscrList_,sig).remove(p);  // remove from subscriber-list
+    QF_PTR_AT_(QF_subscrList_,sig).rmove(p);  // remove from subscriber-list
 
-    QF_CRIT_EXIT_();
+    QF_CRIT_X_();
 }
 
 //****************************************************************************
@@ -290,28 +290,26 @@ void QActive::unsubscribe(enum_t const sig) const {
 /// QP::QF::publish_(), QP::QActive::subscribe(), and
 /// QP::QActive::unsubscribe()
 ///
-void QActive::unsubscribeAll(void) const {
-    uint_fast8_t const p = static_cast<uint_fast8_t>(m_prio);
+void QActive::unsubscribeAll(void) const noexcept {
+    std::uint_fast8_t const p = static_cast<std::uint_fast8_t>(m_prio);
 
-    Q_REQUIRE_ID(500, (static_cast<uint_fast8_t>(0) < p)
-                      && (p <= static_cast<uint_fast8_t>(QF_MAX_ACTIVE))
+    Q_REQUIRE_ID(500, (0U < p) && (p <= QF_MAX_ACTIVE)
                       && (QF::active_[p] == this));
 
     for (enum_t sig = Q_USER_SIG; sig < QF_maxPubSignal_; ++sig) {
         QF_CRIT_STAT_
-        QF_CRIT_ENTRY_();
+        QF_CRIT_E_();
         if (QF_PTR_AT_(QF_subscrList_, sig).hasElement(p)) {
-            QF_PTR_AT_(QF_subscrList_, sig).remove(p);
+            QF_PTR_AT_(QF_subscrList_, sig).rmove(p);
 
-            QS_BEGIN_NOCRIT_(QS_QF_ACTIVE_UNSUBSCRIBE,
-                             QS::priv_.locFilter[QS::AO_OBJ], this)
-                QS_TIME_();     // timestamp
-                QS_SIG_(sig);   // the signal of this event
-                QS_OBJ_(this);  // this active object
-            QS_END_NOCRIT_()
+            QS_BEGIN_NOCRIT_PRE_(QS_QF_ACTIVE_UNSUBSCRIBE, m_prio)
+                QS_TIME_PRE_();     // timestamp
+                QS_SIG_PRE_(sig);   // the signal of this event
+                QS_OBJ_PRE_(this);  // this active object
+            QS_END_NOCRIT_PRE_()
 
         }
-        QF_CRIT_EXIT_();
+        QF_CRIT_X_();
 
         // prevent merging critical sections
         QF_CRIT_EXIT_NOP();

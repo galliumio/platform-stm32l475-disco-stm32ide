@@ -315,7 +315,6 @@ QState UartOut::Normal(UartOut * const me, QEvt const * const e) {
         case DMA_DONE: {
             //EVENT(e);
             me->m_fifo->IncReadIndex(me->m_writeCount);
-            Evt *evt;
             if (me->m_fifo->GetUsedCount()) {
                 me->Raise(new Evt(CONTINUE));
             } else {

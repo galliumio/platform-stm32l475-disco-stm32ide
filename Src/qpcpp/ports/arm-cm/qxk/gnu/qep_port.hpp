@@ -1,15 +1,15 @@
 /// @file
-/// @brief QEP/C++ port to ARM Cortex-M, generic C++ compiler
+/// @brief QEP/C++ port, GCC-ARM compiler
 /// @cond
 ///***************************************************************************
-/// Last updated for version 5.4.0
-/// Last updated on  2015-03-14
+/// Last updated for version 6.8.0
+/// Last updated on  2020-01-21
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) Quantum Leaps, All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -27,23 +27,26 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// Web:   www.state-machine.com
-/// Email: info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qep_port_h
-#define qep_port_h
+#ifndef QEP_PORT_HPP
+#define QEP_PORT_HPP
 
-#include <stdint.h>  // Exact-width types. WG14/N843 C99 Standard
+//! no-return function specifier (GCC-ARM compiler)
+#define Q_NORETURN   __attribute__ ((noreturn)) void
+
+#include <cstdint>  // Exact-width types. C++11 Standard
 
 #define Q_EVT_CTOR              // Gallium - added
 //#define Q_EVT_VIRTUAL         // Gallium - added but commented as no need for virtual dtor.
 #define QF_TIMEEVT_CTR_SIZE 4   // Gallium - added
 
-#include "qep.h"     // QEP platform-independent public interface
+#include "qep.hpp"  // QEP platform-independent public interface
 
-#endif // qep_port_h
+#endif // QEP_PORT_HPP

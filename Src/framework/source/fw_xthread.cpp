@@ -85,7 +85,7 @@ void XThread::Dispatch(QEvt const * const e) {
     }
     HsmnReg *hsmnReg = m_hsmnRegMap.GetByKey(hsmn);
     if (hsmnReg && hsmnReg->GetValue()) {
-        hsmnReg->GetValue()->dispatch(e);
+        hsmnReg->GetValue()->Dispatch(e);
     }
 }
 

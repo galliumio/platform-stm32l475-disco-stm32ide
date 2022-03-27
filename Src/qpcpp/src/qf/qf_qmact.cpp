@@ -2,14 +2,14 @@
 /// @brief QMActive::QMActive() and virtual functions
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.2.0
-/// Last updated on  2018-03-16
+/// Last updated for version 6.9.2
+/// Last updated on  2020-12-17
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2018 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -27,16 +27,17 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
 #define QP_IMPL           // this is QP implementation
-#include "qf_port.h"      // QF port
+#include "qf_port.hpp"    // QF port
+#include "qassert.h"      // QP embedded systems-friendly assertions
 
 //! Internal macro to cast a QP::QMActive pointer @p qact_ to QP::QMsm*
 /// @note
@@ -54,34 +55,46 @@
 
 namespace QP {
 
-//****************************************************************************
-QMActive::QMActive(QStateHandler const initial)
+//Q_DEFINE_THIS_MODULE("qf_qmact")
+
+//............................................................................
+QMActive::QMActive(QStateHandler const initial) noexcept
   : QActive(initial)
 {
-    m_state.obj = &QMsm::msm_top_s;
     m_temp.fun  = initial;
 }
 
-//****************************************************************************
-void QMActive::init(QEvt const * const e) {
-    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::init(e);
+//............................................................................
+void QMActive::init(void const * const e, std::uint_fast8_t const qs_id) {
+    m_state.obj = &QMsm::msm_top_s;
+    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::init(e, qs_id);
 }
-//****************************************************************************
-void QMActive::init(void) {
-    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::init();
+//............................................................................
+void QMActive::init(std::uint_fast8_t const qs_id) {
+    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::init(qs_id);
 }
-//****************************************************************************
-void QMActive::dispatch(QEvt const * const e) {
-    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::dispatch(e);
+//............................................................................
+void QMActive::dispatch(QEvt const * const e, std::uint_fast8_t const qs_id) {
+    QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::dispatch(e, qs_id);
 }
-//****************************************************************************
-bool QMActive::isInState(QMState const * const st) const {
+
+//............................................................................
+bool QMActive::isInState(QMState const * const st) const noexcept {
     return QF_QMACTIVE_TO_QMSM_CONST_CAST_(this)->QMsm::isInState(st);
 }
-//****************************************************************************
-QMState const *QMActive::childStateObj(QMState const * const parent) const {
+//............................................................................
+QMState const *QMActive::childStateObj(QMState const * const parent)
+    const noexcept
+{
     return QF_QMACTIVE_TO_QMSM_CONST_CAST_(this)->QMsm::childStateObj(parent);
 }
+
+//............................................................................
+#ifdef Q_SPY
+    QStateHandler QMActive::getStateHandler() noexcept {
+        return QF_QMACTIVE_TO_QMSM_CAST_(this)->QMsm::getStateHandler();
+    }
+#endif
 
 } // namespace QP
 

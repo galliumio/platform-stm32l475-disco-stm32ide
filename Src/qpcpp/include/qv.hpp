@@ -3,14 +3,14 @@
 /// @ingroup qv
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.2.0
-/// Last updated on  2018-03-16
+/// Last updated for version 6.9.1
+/// Last updated on  2020-09-15
 ///
-///                    Q u a n t u m     L e a P s
-///                    ---------------------------
-///                    innovating embedded systems
+///                    Q u a n t u m  L e a P s
+///                    ------------------------
+///                    Modern Embedded Software
 ///
-/// Copyright (C) 2002-2018 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,31 +28,26 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/// along with this program. If not, see <www.gnu.org/licenses>.
 ///
 /// Contact information:
-/// https://www.state-machine.com
-/// mailto:info@state-machine.com
+/// <www.state-machine.com/licensing>
+/// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
 
-#ifndef qv_h
-#define qv_h
+#ifndef QV_HPP
+#define QV_HPP
 
-#include "qequeue.h" // QV kernel uses the native QF event queue
-#include "qmpool.h"  // QV kernel uses the native QF memory pool
-#include "qpset.h"   // QV kernel uses the native QF priority set
+#include "qequeue.hpp" // QV kernel uses the native QF event queue
+#include "qmpool.hpp"  // QV kernel uses the native QF memory pool
+#include "qpset.hpp"   // QV kernel uses the native QF priority set
 
 //****************************************************************************
 // QF configuration for QK
 
-//! This macro defines the type of the event queue used for active objects.
-/// @note
-/// This is just an example of the macro definition. Typically, you need
-/// to define it in the specific QF port file (qf_port.h). In case of QK,
-/// which always depends on the native QF queue, this macro is defined at the
-/// level of the platform-independent interface qv.h.
-#define QF_EQUEUE_TYPE             QEQueue
+// QV event-queue used for AOs
+#define QF_EQUEUE_TYPE       QEQueue
 
 
 //****************************************************************************
@@ -69,11 +64,6 @@ namespace QP {
 /// use the extern "C" linkage specification.
 class QV {
 public:
-
-    //! get the current QV version number string of the form X.Y.Z
-    static char_t const *getVersion(void) {
-        return versionStr;
-    }
 
     //! QV idle callback (customized in BSPs for QK)
     /// @description
@@ -102,26 +92,25 @@ extern "C" {
 
     // QV-specific scheduler locking (not needed in QV)
     #define QF_SCHED_STAT_
-    #define QF_SCHED_LOCK_(dummy) ((void)0)
-    #define QF_SCHED_UNLOCK_()    ((void)0)
+    #define QF_SCHED_LOCK_(dummy) (static_cast<void>(0))
+    #define QF_SCHED_UNLOCK_()    (static_cast<void>(0))
 
     // QV-specific native event queue operations...
     #define QACTIVE_EQUEUE_WAIT_(me_) \
-        Q_ASSERT_ID(110, (me_)->m_eQueue.m_frontEvt != static_cast<QEvt *>(0))
+        Q_ASSERT_ID(110, (me_)->m_eQueue.m_frontEvt != nullptr)
     #define QACTIVE_EQUEUE_SIGNAL_(me_) \
-        (QV_readySet_.insert(static_cast<uint_fast8_t>((me_)->m_prio)))
+        (QV_readySet_.insert(static_cast<std::uint_fast8_t>((me_)->m_prio)))
 
     // QV-specific native QF event pool operations...
     #define QF_EPOOL_TYPE_  QMPool
     #define QF_EPOOL_INIT_(p_, poolSto_, poolSize_, evtSize_) \
         (p_).init((poolSto_), (poolSize_), (evtSize_))
-    #define QF_EPOOL_EVENT_SIZE_(p_) \
-        static_cast<uint_fast16_t>((p_).getBlockSize())
-    #define QF_EPOOL_GET_(p_, e_, m_) \
-        ((e_) = static_cast<QEvt *>((p_).get((m_))))
-    #define QF_EPOOL_PUT_(p_, e_) ((p_).put(e_))
+    #define QF_EPOOL_EVENT_SIZE_(p_)  ((p_).getBlockSize())
+    #define QF_EPOOL_GET_(p_, e_, m_, qs_id_) \
+        ((e_) = static_cast<QEvt *>((p_).get((m_), (qs_id_))))
+    #define QF_EPOOL_PUT_(p_, e_, qs_id_) ((p_).put((e_), (qs_id_)))
 
 #endif // QP_IMPL
 
-#endif // qv_h
+#endif // QV_HPP
 

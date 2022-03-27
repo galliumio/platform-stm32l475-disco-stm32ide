@@ -482,7 +482,7 @@ QState Console::Started(Console * const me, QEvt const * const e) {
             Log::AddInterface(me->m_outIfHsmn, &me->m_outFifo, writeReqSig, me->m_isDefault);
             // Start input region.
             CmdInputStartReq req(me->GetCmdInputHsmn(), me->GetHsmn(), QEvt::STATIC_EVT);
-            me->m_cmdInput.dispatch(&req);
+            me->m_cmdInput.Dispatch(&req);
             me->Banner();
             me->m_lastCmdFunc = NULL;
             me->Prompt();
@@ -508,7 +508,7 @@ QState Console::Started(Console * const me, QEvt const * const e) {
             while(count-- && me->m_inFifo.Read(reinterpret_cast<uint8_t *>(&c), 1)) {
                 // Static event to save new and gc. It must not be deferred.
                 CmdInputCharReq req(me->GetCmdInputHsmn(), me->GetHsmn(), c, QEvt::STATIC_EVT);
-                me->m_cmdInput.dispatch(&req);
+                me->m_cmdInput.Dispatch(&req);
                 if (me->m_cmdInput.IsCmdReady()) {
                     me->Raise(new Evt(CMD_RECV));
                     break;
@@ -566,7 +566,7 @@ QState Console::Interactive(Console * const me, QEvt const * const e) {
             // Start parser region.
             CmdParserStartReq req(me->GetCmdParserHsmn(), me->GetHsmn(),
                                   me->m_cmdStr, me->m_argv, &me->m_argc, ARRAY_COUNT(me->m_argv), QEvt::STATIC_EVT);
-            me->m_cmdParser.dispatch(&req);
+            me->m_cmdParser.Dispatch(&req);
             //LOG("argc = %d", me->m_argc);
             //for (uint32_t i = 0; i < me->m_argc; i++) {
             //    LOG("argv[%d] = %s", i, me->m_argv[i]);
