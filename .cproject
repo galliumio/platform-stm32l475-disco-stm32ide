@@ -61,7 +61,7 @@
 									<listOptionValue builtIn="false" value="../Src/system/BSP/Components/lsm6dsl"/>
 									<listOptionValue builtIn="false" value="../Src/system/BSP/Components/m24sr"/>
 									<listOptionValue builtIn="false" value="../Src/system/BSP/Components/mx25r6435f"/>
-									<listOptionValue builtIn="false" value="../src/tinyml"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.2088152819" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -82,11 +82,11 @@
 									<listOptionValue builtIn="false" value="../Src/qpcpp/include"/>
 									<listOptionValue builtIn="false" value="../Src/qpcpp/ports/arm-cm/qxk/gnu"/>
 									<listOptionValue builtIn="false" value="../Src/qpcpp/src"/>
-									<listOptionValue builtIn="false" value="../src/tinyml"/>
-									<listOptionValue builtIn="false" value="../src/tinyml/third_party"/>
-									<listOptionValue builtIn="false" value="../src/tinyml/third_party/flatbuffers/include"/>
-									<listOptionValue builtIn="false" value="../src/tinyml/third_party/gemmlowp"/>
-									<listOptionValue builtIn="false" value="../src/tinyml/third_party/ruy"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml/third_party"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml/third_party/flatbuffers/include"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml/third_party/gemmlowp"/>
+									<listOptionValue builtIn="false" value="../Src/tinyml/third_party/ruy"/>
 									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="../Src/system/include"/>
 									<listOptionValue builtIn="false" value="../Src/system/include/cmsis"/>
@@ -135,7 +135,7 @@
 									<listOptionValue builtIn="false" value="../Src/app/Wifi"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.209233102" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp14" valueType="enumerated"/>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags.596842949" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags.596842949" name="Other flags" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList">
 									<listOptionValue builtIn="false" value="-Wno-stringop-truncation"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.980984355" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
