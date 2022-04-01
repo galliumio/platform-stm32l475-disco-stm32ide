@@ -49,7 +49,7 @@
 FW_DEFINE_THIS_FILE("SystemCmd.cpp")
 
 // Uncomment the following to enable tensorflow demo.
-#define ENABLE_TENSOR
+//#define ENABLE_TENSOR
 #ifdef ENABLE_TENSOR
 #include "tensorflow/lite/micro/examples/hello_world/main_functions.h"
 #endif
