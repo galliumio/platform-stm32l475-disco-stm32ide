@@ -71,14 +71,12 @@ valign=top
 --
 entry/ start m_stateTimer,
        SendReq(DISP_STOP_REQ),
-       SendReq(SESNOR_ACCEL_GYRO_OFF_REQ),
-       SendReq(SENSOR_HUMID_TEMP_OFF_REQ)
+       SendReq(SESNOR_ACCEL_GYRO_OFF_REQ)
 exit/ stop m_stateTimer, recall
 
 LEVEL_METER_STOP_REQ/ defer
 
-DISP_STOP_CFM, SENSOR_ACCEL_GYRO_OFF_CFM,
-SENSOR_HUMID_TEMP_OFF_CFM
+DISP_STOP_CFM, SENSOR_ACCEL_GYRO_OFF_CFM
 / if (!CheckCfm()) Raise(FAILED(error))
   else if (allReceived) Raise(DONE)
     
@@ -98,12 +96,11 @@ valign=top
 --
 entry/ start m_stateTimer,
        SendReq(DISP_START_REQ), 
-       SendReq(SENSOR_ACCEL_GYRO_ON_REQ(m_accelGyroPipe)),
-       SendReq(SENSOR_HUMID_TEMP_ON_REQ(m_humidTempPipe))
+       SendReq(SENSOR_ACCEL_GYRO_ON_REQ(m_accelGyroPipe))
 exit/ stop m_stateTimer
 
 DISP_START_CFM,
-SENSOR_ACCEL_GYRO_ON_CFM, SENSOR_HUMID_TEMP_ON_CFM
+SENSOR_ACCEL_GYRO_ON_CFM
 / if (!CheckCfm()) Raise(FAILED(error))
   else if (allReceived) Raise(DONE)
    
@@ -337,8 +334,7 @@ valign=top
 entry
 / Send(DISP_DRAW_BEGIN_REQ, ILI9341),
   Send(DISP_DRAW_TEXT_REQ, ILI9341) based on 
-    m_pitch, m_roll, m_pitchThres, m_rollThres,
-    m_humidity and m_temperature)
+    m_pitch, m_roll, m_pitchThres, m_rollThres
   Send(DISP_DRAW_END_REQm, ILI9341)
   start m_stateTimer (@todo)
   
@@ -424,15 +420,12 @@ an alert when exceeded.</panel_attributes>
     <panel_attributes>Started
 --
 entry/ start periodic m_reportTimer,
-       m_pitch = 0, m_roll = 0, m_pitchThres = 90, m_rollThres = 90,
-       m_humidity = 0, m_temperature = 0 
+       m_pitch = 0, m_roll = 0, m_pitchThres = 90, m_rollThres = 90
 exit/ stop m_reportTimer
 REPORT_TIMER
 / read all samples from m_accelGyropipe,
   calcuate average xyz acceleration,
   calculate m_pitch and m_roll,
-  read all samples from m_humidTempPipe,
-  save samples to m_humidy and m_temperature,
   Raise(REDRAW),
   SendIndMsg(LEVEL_METER_DATA_IND(SensorDataIndMsg(m_pitch, m_roll)), NODE)
   
