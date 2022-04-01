@@ -58,8 +58,8 @@
 
 // Compile options to enable demo application.
 // Only one of the following can be enabled at a time.
-//#define ENABLE_TRAFFIC
-#define ENABLE_LEVEL_METER
+#define ENABLE_TRAFFIC
+//#define ENABLE_LEVEL_METER
 //#define ENABLE_NODE
 
 #if (defined(ENABLE_TRAFFIC) && defined(ENABLE_LEVEL_METER))
