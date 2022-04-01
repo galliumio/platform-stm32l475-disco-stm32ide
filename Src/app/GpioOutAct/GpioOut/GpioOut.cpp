@@ -266,14 +266,146 @@ QState GpioOut::Started(GpioOut * const me, QEvt const * const e) {
             me->DeInitGpio();
             return Q_HANDLED();
         }
+        case Q_INIT_SIG: {
+            return Q_TRAN(&GpioOut::Idle);
+        }
         case GPIO_OUT_STOP_REQ: {
             EVENT(e);
             Evt const &req = EVT_CAST(*e);
             me->SendCfm(new GpioOutStopCfm(ERROR_SUCCESS), req);
             return Q_TRAN(&GpioOut::Stopped);
         }
+        // Assignment 3
+        /*
+        case GPIO_OUT_PATTERN_REQ: {
+            EVENT(e);
+            GpioOutPatternReq const &req = static_cast<GpioOutPatternReq const &>(*e);
+            GpioPattern const *pattern = me->m_config->patternSet.GetPattern(req.GetPatternIndex());
+            if (pattern) {
+                // Implement statechart.
+                me->SendCfm(new GpioOutPatternCfm(ERROR_SUCCESS), req);
+                return Q_TRAN(&GpioOut::Active);
+            } else {
+                me->SendCfm(new GpioOutPatternCfm(ERROR_PARAM, me->GetHsmn(), GPIO_OUT_REASON_INVALID_PATTERN), req);
+                return Q_HANDLED();
+            }
+        }
+        */
     }
     return Q_SUPER(&GpioOut::Root);
+}
+
+QState GpioOut::Idle(GpioOut * const me, QEvt const * const e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            me->ConfigPwm(0);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case GPIO_OUT_OFF_REQ: {
+            EVENT(e);
+            Evt const &req = EVT_CAST(*e);
+            me->SendCfm(new GpioOutOffCfm(ERROR_SUCCESS), req);
+            return Q_HANDLED();
+        }        
+    }
+    return Q_SUPER(&GpioOut::Started);
+}
+
+QState GpioOut::Active(GpioOut * const me, QEvt const * const e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            FW_ASSERT(me->m_currPattern);
+            // Assignment 3
+            // Implement statechart.
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            me->m_intervalTimer.Stop();
+            return Q_HANDLED();
+        }
+        case Q_INIT_SIG: {
+            if (me->m_isRepeat) {
+                return Q_TRAN(&GpioOut::Repeating);
+            } else {
+                return Q_TRAN(&GpioOut::Once);
+            }
+        }
+        case GPIO_OUT_OFF_REQ: {
+            EVENT(e);
+            Evt const &req = EVT_CAST(*e);
+            me->SendCfm(new GpioOutOffCfm(ERROR_SUCCESS), req);
+            me->Raise(new Evt(DONE));
+            return Q_HANDLED();
+        }
+        case INTERVAL_TIMER: {
+            EVENT(e);
+            // Assignment 3
+            /*
+            uint32_t intervalCount = me->m_currPattern->GetCount();
+            FW_ASSERT(intervalCount > 0);
+            // Implement statechart. Call "me->Raise(new Evt(XXX))" to send an internal event.
+            */
+            return Q_HANDLED();
+        }
+        case NEXT_INTERVAL: {
+            EVENT(e);
+            // Assignment 3
+            // Implement statechart.
+            return Q_TRAN(&GpioOut::Active);
+        }
+        case LAST_INTERVAL: {
+            EVENT(e);
+            // Assignment 3
+            // Implement statechart.
+            return Q_TRAN(&GpioOut::Active);
+        }       
+        case DONE: {
+            EVENT(e);
+            return Q_TRAN(&GpioOut::Idle);
+        }   
+    }
+    return Q_SUPER(&GpioOut::Started);
+}
+
+QState GpioOut::Repeating(GpioOut * const me, QEvt const * const e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+    }
+    return Q_SUPER(&GpioOut::Active);
+}
+
+QState GpioOut::Once(GpioOut * const me, QEvt const * const e) {
+    switch (e->sig) {
+        case Q_ENTRY_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case Q_EXIT_SIG: {
+            EVENT(e);
+            return Q_HANDLED();
+        }
+        case LAST_INTERVAL: {
+            EVENT(e);
+            // Assignment 3
+            // Implement statechart. Call "me->Raise(new Evt(XXX))" to send an internal event.
+            return Q_HANDLED();
+        }        
+    }
+    return Q_SUPER(&GpioOut::Active);
 }
 
 /*
