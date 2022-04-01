@@ -35,8 +35,7 @@ fontfamily=Monospaced //possible: SansSerif,Serif,Monospaced
     </coordinates>
     <panel_attributes>Traffic::Root
 --
-entry/ initialize LAMP_NS and LAMP_EW regions
-TRAFFIC_START_REQ/ SendCfmn(TRAFFIC_START_CFM(STATE))
+TRAFFIC_START_REQ/ SendCfm(TRAFFIC_START_CFM(STATE))
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -44,7 +43,7 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>135</x>
+      <x>153</x>
       <y>261</y>
       <w>1179</w>
       <h>1881</h>
@@ -59,10 +58,10 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>549</x>
-      <y>90</y>
-      <w>270</w>
-      <h>81</h>
+      <x>558</x>
+      <y>117</y>
+      <w>306</w>
+      <h>99</h>
     </coordinates>
     <panel_attributes>Stopped
 --
@@ -76,52 +75,49 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>414</x>
-      <y>135</y>
-      <w>153</w>
-      <h>144</h>
+      <x>360</x>
+      <y>162</y>
+      <w>216</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>150.0;10.0;10.0;10.0;10.0;140.0</additional_attributes>
+    <additional_attributes>220.0;10.0;10.0;10.0;10.0;110.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>810</x>
-      <y>135</y>
-      <w>108</w>
-      <h>144</h>
+      <x>855</x>
+      <y>162</y>
+      <w>198</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>100.0;140.0;100.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>200.0;110.0;200.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>432</x>
+      <x>135</x>
       <y>180</y>
-      <w>270</w>
-      <h>54</h>
+      <w>252</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>TRAFFIC_START_REQ
-/ Send(DISP_START_REQ),
-  Send(DISP_DRAW_BEGIN_REQ),
-  SendCfm(TRAFFIC_START_CFM(SUCCESS))
+/ SendCfm(TRAFFIC_START_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>909</x>
+      <x>1035</x>
       <y>171</y>
-      <w>252</w>
-      <h>63</h>
+      <w>243</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>TRAFFIC_STOP_REQ
-/ Send(LAMP_RESET_REQ, LAMP_NS),
+/ Send(LAMP_RESET_REQ, LAMP_NS), 
   Send(LAMP_RESET_REQ, LAMP_EW),
-  Send(DISP_STOP_REQ),
   SendCfm(TRAFFIC_STOP_CFM(SUCCESS))
 style=wordwrap</panel_attributes>
     <additional_attributes/>
@@ -129,50 +125,15 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>243</x>
-      <y>504</y>
+      <x>261</x>
+      <y>423</y>
       <w>963</w>
       <h>243</h>
     </coordinates>
     <panel_attributes>NSGo
 --
-entry/ Send(LAMP_RED_REQ, LAMP_EW), Send(LAMP_GREEN_REQ, LAMP_NS),
-       start sensing car on EW directions
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>306</x>
-      <y>612</y>
-      <w>315</w>
-      <h>99</h>
-    </coordinates>
-    <panel_attributes>NSMinTimeWait
---
-entry/ carWaiting = false, 
-       start waitTimer(20s)
-exit/ if (carWaiting) Send(TRAFFIC_CAR_EW_REQ), 
-      stop waitTimer
-TRAFFIC_CAR_EW_REQ/ carWaiting = true
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>810</x>
-      <y>612</y>
-      <w>315</w>
-      <h>99</h>
-    </coordinates>
-    <panel_attributes>NSMinTimeExceeded
---
+entry/ Send(LAMP_RED_REQ, LAMP_EW),
+       Send(LAMP_GREEN_REQ, LAMP_NS)
 
 
 valign=top
@@ -182,8 +143,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>288</x>
-      <y>468</y>
+      <x>306</x>
+      <y>387</y>
       <w>72</w>
       <h>54</h>
     </coordinates>
@@ -194,8 +155,8 @@ group=2</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>279</x>
-      <y>468</y>
+      <x>297</x>
+      <y>387</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -204,62 +165,17 @@ group=2</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>405</x>
-      <y>576</y>
-      <w>72</w>
-      <h>54</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>396</x>
-      <y>576</y>
-      <w>18</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>type=initial</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>666</x>
-      <y>648</y>
-      <w>108</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>WAIT_TIMER
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>612</x>
-      <y>657</y>
-      <w>216</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;220.0;10.0</additional_attributes>
-  </element>
-  <element>
     <id>UMLState</id>
     <coordinates>
-      <x>819</x>
-      <y>846</y>
+      <x>837</x>
+      <y>765</y>
       <w>387</w>
       <h>99</h>
     </coordinates>
     <panel_attributes>NSSlow
 --
-entry/ Send(LAMP_YELLOW_REQ, LAMP_NS)
-       start waitTimer(3)
+entry/ Send(LAMP_YELLOW_REQ, LAMP_NS),
+       start waitTimer(3s)
 exit/ stop waitTimer
 
 valign=top
@@ -269,15 +185,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>243</x>
-      <y>846</y>
+      <x>261</x>
+      <y>765</y>
       <w>387</w>
       <h>99</h>
     </coordinates>
     <panel_attributes>EWSlow
 --
-entry/ Send(LAMP_YELLOW_REQ, LAMP_EW)
-       start waitTimer(3)
+entry/ Send(LAMP_YELLOW_REQ, LAMP_EW),
+       start waitTimer(3s)
 exit/ stop waitTimer
 
 valign=top
@@ -287,8 +203,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>999</x>
-      <y>738</y>
+      <x>1017</x>
+      <y>657</y>
       <w>27</w>
       <h>126</h>
     </coordinates>
@@ -298,8 +214,8 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1008</x>
-      <y>792</y>
+      <x>1026</x>
+      <y>711</y>
       <w>126</w>
       <h>27</h>
     </coordinates>
@@ -310,108 +226,24 @@ style=wordwrap</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>243</x>
-      <y>1026</y>
+      <x>261</x>
+      <y>945</y>
       <w>972</w>
       <h>252</h>
     </coordinates>
     <panel_attributes>EWGo
 --
-entry/ Send(LAMP_RED_REQ, LAMP_NS), Send(LAMP_GREEN_REQ, LAMP_EW),
-       start idleTimer(15s),
-       start sensing car on NS and EW directions
-exit/ stop idleTimer
-TRAFFIC_CAR_EW_REQ/ restart idleTimer
+entry/ Send(LAMP_RED_REQ, LAMP_NS),
+       Send(LAMP_GREEN_REQ, LAMP_EW)
 
 valign=top
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>315</x>
-      <y>1143</y>
-      <w>315</w>
-      <h>99</h>
-    </coordinates>
-    <panel_attributes>EWMinTimeWait
---
-entry/ carWaiting = false, 
-       start waitTimer(10s)
-exit/ if (carWaiting) Send(TRAFFIC_CAR_NS_REQ), 
-      stop waitTimer
-TRAFFIC_CAR_NS_REQ/ carWaiting = true
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>819</x>
-      <y>1143</y>
-      <w>315</w>
-      <h>99</h>
-    </coordinates>
-    <panel_attributes>EWMinTimeExceeded
---
-
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>405</x>
-      <y>1107</y>
-      <w>18</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>type=initial</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <id>Relation</id>
     <coordinates>
-      <x>414</x>
-      <y>1107</y>
-      <w>72</w>
-      <h>54</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0</additional_attributes>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>675</x>
-      <y>1179</y>
-      <w>108</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>WAIT_TIMER
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>621</x>
-      <y>1188</y>
-      <w>216</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;220.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>126</x>
+      <x>144</x>
       <y>1332</y>
       <w>1206</w>
       <h>36</h>
@@ -423,7 +255,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>126</x>
+      <x>144</x>
       <y>1728</y>
       <w>1206</w>
       <h>36</h>
@@ -435,8 +267,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>999</x>
-      <y>936</y>
+      <x>1017</x>
+      <y>855</y>
       <w>27</w>
       <h>108</h>
     </coordinates>
@@ -446,8 +278,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1008</x>
-      <y>972</y>
+      <x>1026</x>
+      <y>891</y>
       <w>126</w>
       <h>27</h>
     </coordinates>
@@ -458,8 +290,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>414</x>
-      <y>936</y>
+      <x>432</x>
+      <y>855</y>
       <w>27</w>
       <h>108</h>
     </coordinates>
@@ -469,8 +301,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>432</x>
-      <y>792</y>
+      <x>450</x>
+      <y>711</y>
       <w>126</w>
       <h>27</h>
     </coordinates>
@@ -481,8 +313,8 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>414</x>
-      <y>738</y>
+      <x>432</x>
+      <y>657</y>
       <w>27</w>
       <h>126</h>
     </coordinates>
@@ -492,21 +324,20 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>423</x>
-      <y>972</y>
-      <w>135</w>
+      <x>441</x>
+      <y>900</y>
+      <w>126</w>
       <h>27</h>
     </coordinates>
-    <panel_attributes>TRAFFIC_CAR_NS_REQ,
-IDLE_TIMER
+    <panel_attributes>TRAFFIC_CAR_NS_REQ
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>630</x>
-      <y>54</y>
+      <x>648</x>
+      <y>81</y>
       <w>72</w>
       <h>54</h>
     </coordinates>
@@ -517,8 +348,8 @@ group=3</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>621</x>
-      <y>54</y>
+      <x>639</x>
+      <y>81</y>
       <w>18</w>
       <h>18</h>
     </coordinates>
@@ -529,12 +360,12 @@ group=3</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>180</x>
+      <x>198</x>
       <y>1404</y>
       <w>1089</w>
       <h>288</h>
     </coordinates>
-    <panel_attributes>Lamp::Root (hsmn = LAMP_NW)
+    <panel_attributes>Lamp::Root (hsmn = LAMP_NS)
 --
 
 
@@ -545,14 +376,14 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>216</x>
+      <x>234</x>
       <y>1494</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Red
 --
-entry/ LOG(), Draw(true, false, false)
+entry/ Print()
 
 valign=top
 </panel_attributes>
@@ -561,14 +392,14 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>594</x>
+      <x>621</x>
       <y>1494</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Green
 --
-entry/ LOG(), Draw(false, false, true)
+entry/ Print()
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -576,7 +407,7 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>279</x>
+      <x>297</x>
       <y>1458</y>
       <w>72</w>
       <h>54</h>
@@ -588,7 +419,7 @@ group=4</panel_attributes>
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>270</x>
+      <x>288</x>
       <y>1458</y>
       <w>18</w>
       <h>18</h>
@@ -600,8 +431,8 @@ group=4</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>477</x>
-      <y>1512</y>
+      <x>504</x>
+      <y>1503</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
@@ -612,25 +443,25 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>459</x>
+      <x>477</x>
       <y>1521</y>
-      <w>153</w>
+      <w>162</w>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;160.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>972</x>
+      <x>990</x>
       <y>1494</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Yellow
 --
-entry/ LOG(), Draw(false, true, false)
+entry/ Print()
 
 valign=top
 </panel_attributes>
@@ -639,19 +470,19 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>837</x>
+      <x>864</x>
       <y>1521</y>
-      <w>153</w>
+      <w>144</w>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>855</x>
-      <y>1512</y>
+      <x>882</x>
+      <y>1503</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
@@ -662,7 +493,7 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>315</x>
+      <x>333</x>
       <y>1557</y>
       <w>27</w>
       <h>153</h>
@@ -673,200 +504,20 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>324</x>
-      <y>1620</y>
-      <w>189</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>LAMP_RED_REQ, LAMP_RESET_REQ
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>324</x>
-      <y>306</y>
-      <w>810</w>
-      <h>162</h>
-    </coordinates>
-    <panel_attributes>StopSign
---
-entry/ start blinkTimer(1s, periodic),
-exit/ stop blinkTimer
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1125</x>
-      <y>387</y>
-      <w>207</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>210.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>441</x>
-      <y>360</y>
-      <w>234</w>
-      <h>81</h>
-    </coordinates>
-    <panel_attributes>StopSignOff
---
-entry/ Send(LAMP_RED_REQ, LAMP_NS),
-       Send(LAMP_RED_REQ, LAMP_EW)
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>846</x>
-      <y>360</y>
-      <w>234</w>
-      <h>81</h>
-    </coordinates>
-    <panel_attributes>StopSignOff
---
-entry/ Send(LAMP_OFF_REQ, LAMP_NS),
-       Send(LAMP_OFF_REQ, LAMP_EW)
-
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>666</x>
-      <y>378</y>
-      <w>198</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;200.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>666</x>
-      <y>414</y>
-      <w>198</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>200.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>720</x>
-      <y>369</y>
-      <w>81</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>BLINK_TIMER
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>720</x>
-      <y>405</y>
-      <w>81</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>BLINK_TIMER
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>387</x>
-      <y>396</y>
-      <w>72</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>378</x>
-      <y>396</y>
-      <w>18</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>type=initial</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>1170</x>
-      <y>369</y>
-      <w>126</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>TRAFFIC_ERROR_REQ
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>972</x>
-      <y>1593</y>
-      <w>252</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>Off
---
-entry/ LOG(), Draw(false, false, false)
-valign=top
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>846</x>
-      <y>1620</y>
-      <w>144</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;80.0;10.0;10.0;140.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>855</x>
-      <y>1611</y>
+      <x>342</x>
+      <y>1629</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
-    <panel_attributes>LAMP_OFF_REQ
+    <panel_attributes>LAMP_RED_REQ
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>180</x>
-      <y>1800</y>
+      <x>198</x>
+      <y>1809</y>
       <w>1089</w>
       <h>288</h>
     </coordinates>
@@ -881,14 +532,14 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>216</x>
+      <x>234</x>
       <y>1890</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Red
 --
-entry/ LOG(), Draw(true, false, false)
+entry/ Print()
 
 valign=top
 </panel_attributes>
@@ -897,14 +548,15 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>594</x>
+      <x>621</x>
       <y>1890</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Green
 --
-entry/ LOG(), Draw(false, false, true)
+entry/ Print()
+
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -912,7 +564,7 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>270</x>
+      <x>288</x>
       <y>1854</y>
       <w>18</w>
       <h>18</h>
@@ -924,7 +576,7 @@ group=5</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>279</x>
+      <x>297</x>
       <y>1854</y>
       <w>72</w>
       <h>54</h>
@@ -936,8 +588,8 @@ group=5</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>477</x>
-      <y>1908</y>
+      <x>504</x>
+      <y>1899</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
@@ -948,25 +600,25 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>459</x>
+      <x>477</x>
       <y>1917</y>
-      <w>153</w>
+      <w>162</w>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;160.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>972</x>
+      <x>990</x>
       <y>1890</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Yellow
 --
-entry/ LOG(), Draw(false, true, false)
+entry/ Print()
 
 valign=top
 </panel_attributes>
@@ -975,19 +627,19 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>837</x>
+      <x>864</x>
       <y>1917</y>
-      <w>153</w>
+      <w>144</w>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>855</x>
-      <y>1908</y>
+      <x>882</x>
+      <y>1899</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
@@ -998,37 +650,37 @@ style=wordwrap</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>315</x>
+      <x>333</x>
       <y>1953</y>
       <w>27</w>
-      <h>153</h>
+      <h>162</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;160.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>324</x>
-      <y>2016</y>
-      <w>189</w>
+      <x>342</x>
+      <y>2034</y>
+      <w>108</w>
       <h>27</h>
     </coordinates>
-    <panel_attributes>LAMP_RED_REQ, LAMP_RESET_REQ
+    <panel_attributes>LAMP_RED_REQ
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>972</x>
-      <y>1989</y>
+      <x>990</x>
+      <y>1593</y>
       <w>252</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>Off
 --
-entry/ LOG(), Draw(false, false, false)
+entry/ Print()
 valign=top
 </panel_attributes>
     <additional_attributes/>
@@ -1036,8 +688,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>846</x>
-      <y>2016</y>
+      <x>864</x>
+      <y>1620</y>
       <w>144</w>
       <h>90</h>
     </coordinates>
@@ -1047,8 +699,46 @@ valign=top
   <element>
     <id>Text</id>
     <coordinates>
-      <x>855</x>
-      <y>2007</y>
+      <x>873</x>
+      <y>1602</y>
+      <w>108</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>LAMP_OFF_REQ
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>990</x>
+      <y>1989</y>
+      <w>252</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Off
+--
+entry/ Print()
+valign=top
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>864</x>
+      <y>2016</y>
+      <w>144</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>873</x>
+      <y>1998</y>
       <w>108</w>
       <h>27</h>
     </coordinates>
