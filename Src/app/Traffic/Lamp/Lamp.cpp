@@ -67,23 +67,12 @@ static char const * const interfaceEvtName[] = {
 
 // Helper functions.
 void Lamp::Draw(Hsmn hsmn, bool redOn, bool yellowOn, bool greenOn) {
-    char const *buf;
-    uint32_t xOffset;
-    if (hsmn == LAMP_NS) {
-        buf = "NS";
-        xOffset = 10;
-    } else {
-        buf = "EW";
-        xOffset = 120;
-    }
-    // Draw label text.
-    Send(new DispDrawTextReq(buf, xOffset, 50, COLOR24_BLACK, COLOR24_WHITE, 3), ILI9341);
-    // Draw red lamp.
-    Send(new DispDrawRectReq(xOffset, 100, 50, 50, redOn ? COLOR24_RED : COLOR24_BLACK), ILI9341);
-    // Draw red lamp.
-    Send(new DispDrawRectReq(xOffset, 155, 50, 50, yellowOn ? COLOR24_YELLOW : COLOR24_BLACK), ILI9341);
-    // Draw red lamp.
-    Send(new DispDrawRectReq(xOffset, 210, 50, 50, greenOn ? COLOR24_GREEN : COLOR24_BLACK), ILI9341);
+    // Assignment 5
+    // @todo Remove - Avoids warnings only.
+    (void)hsmn;
+    (void)redOn;
+    (void)yellowOn;
+    (void)greenOn;
 }
 
 Lamp::Lamp(Hsmn hsmn, char const *name) :
@@ -127,7 +116,6 @@ QState Lamp::Red(Lamp * const me, QEvt const * const e) {
         case Q_ENTRY_SIG: {
             EVENT(e);
             LOG("[*][ ][ ]");
-            me->Draw(me->GetHsmn(), true, false, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -147,7 +135,6 @@ QState Lamp::Green(Lamp * const me, QEvt const * const e) {
         case Q_ENTRY_SIG: {
             EVENT(e);
             LOG("[ ][ ][*]");
-            me->Draw(me->GetHsmn(), false, false, true);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -167,7 +154,6 @@ QState Lamp::Yellow(Lamp * const me, QEvt const * const e) {
         case Q_ENTRY_SIG: {
             EVENT(e);
             LOG("[ ][*][ ]");
-            me->Draw(me->GetHsmn(), false, true, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -183,7 +169,6 @@ QState Lamp::Off(Lamp * const me, QEvt const * const e) {
         case Q_ENTRY_SIG: {
             EVENT(e);
             LOG("[ ][ ][ ]");
-            me->Draw(me->GetHsmn(), false, false, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
