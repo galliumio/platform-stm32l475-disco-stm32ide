@@ -77,7 +77,8 @@ LevelMeter::LevelMeter() :
     m_pitch(0.0), m_roll(0.0), m_pitchThres(45.0), m_rollThres(45.0),
     m_humidity(0.0), m_temperature(0.0), m_inEvt(QEvt::STATIC_EVT), m_msgSeq(""),
     m_stateTimer(GetHsmn(), STATE_TIMER),
-    m_reportTimer(GetHsmn(), REPORT_TIMER) {
+    m_reportTimer(GetHsmn(), REPORT_TIMER),
+	m_testCnt(0) {
     SET_EVT_NAME(LEVEL_METER);
 }
 
@@ -149,8 +150,8 @@ QState LevelMeter::Starting(LevelMeter * const me, QEvt const * const e) {
             FW_ASSERT(timeout > SensorAccelGyroOnReq::TIMEOUT_MS);
             me->m_stateTimer.Start(timeout);
             me->SendReq(new DispStartReq(), ILI9341, true);
-            me->SendReq(new SensorAccelGyroOnReq(&me->m_accelGyroPipe), SENSOR_ACCEL_GYRO, false);
-            me->SendReq(new SensorHumidTempOnReq(&me->m_humidTempPipe), SENSOR_HUMID_TEMP, false);
+            // Assignment 1 test only.
+            //me->SendReq(new SensorAccelGyroOnReq(&me->m_accelGyroPipe), SENSOR_ACCEL_GYRO, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -159,8 +160,7 @@ QState LevelMeter::Starting(LevelMeter * const me, QEvt const * const e) {
             return Q_HANDLED();
         }
         case DISP_START_CFM:
-        case SENSOR_ACCEL_GYRO_ON_CFM:
-        case SENSOR_HUMID_TEMP_ON_CFM: {
+        case SENSOR_ACCEL_GYRO_ON_CFM: {
             EVENT(e);
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
@@ -200,8 +200,8 @@ QState LevelMeter::Stopping(LevelMeter * const me, QEvt const * const e) {
             FW_ASSERT(timeout > SensorAccelGyroOffReq::TIMEOUT_MS);
             me->m_stateTimer.Start(timeout);
             me->SendReq(new DispStopReq(), ILI9341, true);
-            me->SendReq(new SensorAccelGyroOffReq(), SENSOR_ACCEL_GYRO, false);
-            me->SendReq(new SensorHumidTempOffReq(), SENSOR_HUMID_TEMP, false);
+            // Assignment 1 test only.
+            //me->SendReq(new SensorAccelGyroOffReq(), SENSOR_ACCEL_GYRO, false);
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
@@ -216,8 +216,7 @@ QState LevelMeter::Stopping(LevelMeter * const me, QEvt const * const e) {
             return Q_HANDLED();
         }
         case DISP_STOP_CFM:
-        case SENSOR_ACCEL_GYRO_OFF_CFM:
-        case SENSOR_HUMID_TEMP_OFF_CFM: {
+        case SENSOR_ACCEL_GYRO_OFF_CFM: {
             EVENT(e);
             ErrorEvt const &cfm = ERROR_EVT_CAST(*e);
             bool allReceived;
@@ -247,12 +246,17 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
     switch (e->sig) {
         case Q_ENTRY_SIG: {
             EVENT(e);
-            me->m_pitch = 0.0;
-            me->m_roll = 0.0;
-            me->m_pitchThres = 45.0;
-            me->m_rollThres = 45.0;
-            me->m_humidity = 0.0;
-            me->m_temperature = 0.0;
+
+            // Assignment 1 test only.
+            me->m_testCnt = 0;
+            me->Send(new DispDrawBeginReq(), ILI9341);
+            char buf[] = " Welcome to  EMBSYS 330!";
+            me->Send(new DispDrawTextReq(buf, 10, 90, COLOR24_BLUE, COLOR24_WHITE, 3), ILI9341);
+            me->Send(new DispDrawEndReq(), ILI9341);
+            me->m_reportTimer.Start(100, Timer::PERIODIC);
+            return Q_HANDLED();
+            // End test.
+
             me->m_reportTimer.Start(REPORT_TIMEOUT_MS, Timer::PERIODIC);
             return Q_HANDLED();
         }
@@ -266,64 +270,19 @@ QState LevelMeter::Started(LevelMeter * const me, QEvt const * const e) {
         }
         case REPORT_TIMER: {
             EVENT(e);
-            // Reads acceleration and gyroscope data.
-            // Default to zero.
-            AccelGyroReport report;
-            me->m_avgReport = report;
-            int32_t count = 0;
-            while (me->m_accelGyroPipe.GetUsedCount()) {
-                me->m_accelGyroPipe.Read(&report, 1);
-                me->m_avgReport.m_aX += report.m_aX;
-                me->m_avgReport.m_aY += report.m_aY;
-                me->m_avgReport.m_aZ += report.m_aZ;
-                count++;
-            }
-            if (count) {
-                me->m_avgReport.m_aX /= count;
-                me->m_avgReport.m_aY /= count;
-                me->m_avgReport.m_aZ /= count;
-            }
-            LOG("(count=%d) %d, %d, %d", count, me->m_avgReport.m_aX, me->m_avgReport.m_aY, me->m_avgReport.m_aZ);
 
-            const float PI = 3.14159265;
-            float x = me->m_avgReport.m_aX;
-            float y = me->m_avgReport.m_aY;
-            float z = me->m_avgReport.m_aZ;
-            me->m_pitch = atan(x/sqrt((y*y) + (z*z))) * 180/PI;
-            me->m_roll  = atan(y/sqrt((x*x) + (z*z))) * 180/PI;
-            // Alternative methods.
-            /*
-            const float G = 1000;
-            x = (x > 0) ? LESS(x, G) : GREATER(x, -G);
-            y = (y > 0) ? LESS(y, G) : GREATER(y, -G);
-            me->m_pitch = asin(x/G) * 180/PI;
-            me->m_roll = asin(y/G) * 180/PI;
-            */
-            char val1[10];
-            char val2[10];
-            Log::FloatToStr(val1, sizeof(val1), me->m_pitch,  6,  2);
-            Log::FloatToStr(val2, sizeof(val2), me->m_roll,  6,  2);
-            LOG("pitch=%s, roll=%s", val1, val2);
-            // Avoids (v)snprintf with %f since GCC 10 causes memory leak.
-            // This is kept as comment for reference.
-            //LOG("pitch=%6.2f, roll=%6.2f", me->m_pitch, me->m_roll);
+            // Assignment 1 test only.
+            me->Send(new DispDrawBeginReq(), ILI9341);
+			char buf[100];
+			snprintf(buf, sizeof(buf), "%lu", me->m_testCnt++);
+            me->Send(new DispDrawTextReq(buf, 10, 180, COLOR24_RED, COLOR24_WHITE, 4), ILI9341);
+			if (me->m_testCnt >= 10000) {
+				me->m_testCnt = 0;
+				me->Send(new DispDrawTextReq("        ", 10, 180, COLOR24_RED, COLOR24_WHITE, 4), ILI9341);
+			}
+            me->Send(new DispDrawEndReq(), ILI9341);
+	        // End test.
 
-            // Reads humidity and temperature data.
-            // Since they are slow changing, it's sufficient to save the last values.
-            while (me->m_humidTempPipe.GetUsedCount()) {
-                HumidTempReport report;
-                me->m_humidTempPipe.Read(&report, 1);
-                me->m_humidity = report.m_humidity;
-                me->m_temperature = report.m_temperature;
-            }
-            Log::FloatToStr(val1, sizeof(val1), me->m_humidity,  5,  2);
-            Log::FloatToStr(val2, sizeof(val2), me->m_temperature,  5,  2);
-            LOG("humid=%s, temp=%s", val1, val2);
-
-            me->Raise(new Evt(REDRAW));
-            // @todo Currently when the destination (to) of a msg is undefined, the server sends to all nodes.
-            //       This will be changed to pub-sub in the future.
-            me->SendIndMsg(new LevelMeterDataInd(SensorDataIndMsg(me->m_pitch, me->m_roll)), NODE, MSG_UNDEF, true, me->m_msgSeq);
             return Q_HANDLED();
         }
         case LEVEL_METER_CONTROL_REQ: {
@@ -377,13 +336,6 @@ QState LevelMeter::Redrawing(LevelMeter * const me, QEvt const * const e) {
             Log::FloatToStr(val, sizeof(val), me->m_rollThres,  5,  2);
             snprintf(buf, sizeof(buf), "RT= %s", val);
             me->Send(new DispDrawTextReq(buf, 10, 210, COLOR24_BLACK, COLOR24_WHITE, 4), ILI9341);
-
-            Log::FloatToStr(val, sizeof(val), me->m_humidity,  5,  2);
-            snprintf(buf, sizeof(buf), "H= %s", val);
-            me->Send(new DispDrawTextReq(buf, 10, 280, COLOR24_DARK_GRAY, COLOR24_WHITE, 2), ILI9341);
-            Log::FloatToStr(val,  sizeof(val), me->m_temperature,  5,  2);
-            snprintf(buf, sizeof(buf), "T= %s", val);
-            me->Send(new DispDrawTextReq(buf, 120, 280, COLOR24_DARK_GRAY, COLOR24_WHITE, 2), ILI9341);
 
             me->Send(new DispDrawEndReq(), ILI9341);
             return Q_HANDLED();

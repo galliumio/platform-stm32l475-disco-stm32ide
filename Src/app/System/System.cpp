@@ -60,6 +60,7 @@
 // Only one of the following can be enabled at a time.
 //#define ENABLE_TRAFFIC
 #define ENABLE_LEVEL_METER
+//#define ENABLE_NODE
 
 #if (defined(ENABLE_TRAFFIC) && defined(ENABLE_LEVEL_METER))
 #error ENABLE_TRAFFIC and ENABLE_LEVEL_METER cannot be both defined
@@ -238,7 +239,9 @@ QState System::Starting1(System * const me, QEvt const * const e) {
 #endif
             me->SendReq(new GpioInStartReq(), USER_BTN, false);
             me->SendReq(new GpioOutStartReq(), USER_LED, false);
+#ifdef ENABLE_NODE
             me->SendReq(new NodeStartReq(SRV_DOMAIN, SRV_PORT), NODE, false);
+#endif
             return Q_HANDLED();
         }
         case Q_EXIT_SIG: {
