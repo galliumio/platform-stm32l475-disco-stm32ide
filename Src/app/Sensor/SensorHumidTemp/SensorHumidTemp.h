@@ -62,8 +62,6 @@ protected:
         static QState Starting(SensorHumidTemp * const me, QEvt const * const e);
         static QState Stopping(SensorHumidTemp * const me, QEvt const * const e);
         static QState Started(SensorHumidTemp * const me, QEvt const * const e);
-            static QState Off(SensorHumidTemp * const me, QEvt const * const e);
-            static QState On(SensorHumidTemp * const me, QEvt const * const e);
 
     Hsmn m_drdyHsmn;
     HumidTempPipe *m_pipe;        // Pipe to save humidity/temperature reports/samples.
