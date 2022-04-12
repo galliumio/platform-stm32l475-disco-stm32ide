@@ -452,7 +452,13 @@ __asm volatile (
     "  MOV     r0,#0            \n" /* otherwise, curr := NULL */
     "PendSV_onContextSw2:       \n"
     "  LDR     r3,=QXK_onContextSw \n"
+    /* Gallium - Fixed QXK_ON_CONTEXT_SW not working with softfp. Added PUSH and POP/MOV below.
+     *           See https://sourceforge.net/p/qpc/bugs/306/
+     */
+    "  PUSH    {r1,lr}          \n" /* save the aligner + exception lr */
     "  BLX     r3               \n" /* call QXK_onContextSw() */
+    "  POP     {r1,r3}          \n" /* restore the aligner + lr into r3 */
+    "  MOV     lr,r3            \n" /* restore the exception lr */
 
     /* restore the AAPCS-clobbered registers after a functin call...  */
     "  LDR     r3,=QXK_attr_    \n"

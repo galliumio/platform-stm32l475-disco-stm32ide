@@ -464,6 +464,12 @@ void QXK_activate_(void) {
          }
 #endif // QXK_ON_CONTEXT_SW || Q_SPY
 
+        // Gallium - Work-around for floating-point registers s16-s31 not preserved in the following
+        //           context switching scenario: AO A -> AO B -> ET C.
+        //           where AO A and ET C uses FPU and AO B does not.
+        //           See bug ticket https://sourceforge.net/p/qpc/bugs/305/
+        volatile float testfloat = 1.0f;
+
         QF_INT_ENABLE(); // unconditionally enable interrupts
 
         // perform the run-to-completion (RTC) step...
