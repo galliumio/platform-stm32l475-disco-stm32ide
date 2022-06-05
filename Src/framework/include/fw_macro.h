@@ -91,8 +91,8 @@
 
 #define BYTE_TO_SHORT(a1_, a0_)     (((((uint16_t)(a1_)) & 0xFF) << 8) | (((uint16_t)(a0_)) & 0xFF))
 #define BYTE_TO_LONG(a3_, a2_, a1_, a0_) \
-                                    (((((uint32_t)(a3_)) & 0xFF) << 24) | ((((uint16_t)(a2_)) & 0xFF) << 16) | \
-                                     ((((uint32_t)(a1_)) & 0xFF) << 8) | (((uint16_t)(a0_)) & 0xFF))
+                                    (((((uint32_t)(a3_)) & 0xFF) << 24) | ((((uint32_t)(a2_)) & 0xFF) << 16) | \
+                                     ((((uint32_t)(a1_)) & 0xFF) << 8) | (((uint32_t)(a0_)) & 0xFF))
 #define BYTE_0(a_)                  ((a_) & 0xFF)
 #define BYTE_1(a_)                  (((a_) >> 8) & 0xFF)
 #define BYTE_2(a_)                  (((a_) >> 16) & 0xFF)
