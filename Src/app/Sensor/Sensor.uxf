@@ -266,12 +266,12 @@ style=wordwrap</panel_attributes>
     </coordinates>
     <panel_attributes>Starting
 --
-entry/ start stateTimer,
+entry/ start m_stateTimer,
        SendReq(SENSOR_ACCEL_GYRO_START_REQ),
        SendReq(SENSOR_HUMID_TEMP_START_REQ),
        SendReq(SENSOR_MAG_START_REQ),
        SendReq(SENSOR_PRESS_START_REQ),
-exit/ stop stateTimer
+exit/ stop m_stateTimer
 
 SENSOR_ACCEL_GYRO_START_CFM,
 SENSOR_HUMID_TEMP_START_CFM,
@@ -293,12 +293,12 @@ valign=top
     </coordinates>
     <panel_attributes>Stopping
 --
-entry/ start stateTimer,
+entry/ start m_stateTimer,
        SendReq(SENSOR_ACCEL_GYRO_STOP_REQ),
        SendReq(SENSOR_HUMID_TEMP_STOP_REQ),
        SendReq(SENSOR_MAG_STOP_REQ),
        SendReq(SENSOR_PRESS_STOP_REQ)              
-exit/ stop stateTimer, recall
+exit/ stop m_stateTimer, recall
 
 SENSOR_STOP_REQ/ defer
 
