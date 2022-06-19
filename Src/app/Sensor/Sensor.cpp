@@ -74,7 +74,7 @@ Sensor::Config const Sensor::CONFIG[] = {
     { SENSOR, I2C2, I2C2_EV_IRQn, I2C2_EV_PRIO, I2C2_ER_IRQn, I2C2_ER_PRIO,        // I2C INT
       GPIOB, GPIO_PIN_10, GPIO_PIN_11, GPIO_AF4_I2C2,                              // I2C SCL SDA
       DMA1_Channel4, DMA_REQUEST_3, DMA1_Channel4_IRQn, DMA1_CHANNEL4_PRIO,        // TX DMA
-      DMA1_Channel5, DMA_REQUEST_3, DMA1_Channel4_IRQn, DMA1_CHANNEL5_PRIO,        // RX DMA
+      DMA1_Channel5, DMA_REQUEST_3, DMA1_Channel5_IRQn, DMA1_CHANNEL5_PRIO,        // RX DMA
       ACCEL_GYRO_INT, MAG_DRDY, HUMID_TEMP_DRDY, PRESS_INT
     }
 };
